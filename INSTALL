@@ -1,0 +1,22 @@
+On debian systems
+
+   $ sudo apt-get install nlohmann-json3-dev
+   $ sudo apt-get install libboost-program-options-dev
+   $ make
+
+If debhelper tools are installed
+
+   $ make deb
+
+After that just install the debian packets normally
+
+   # dpkg -i package.
+
+To use most recent boost program_options
+  
+   $ ./bootstrap.sh --with-libraries=program_options,system --prefix=/opt/boost_1_71_0/
+   $ ./b2
+   $ sudo b2 install
+
+and adjust the makefile.
+

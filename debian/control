@@ -1,0 +1,16 @@
+Source: tsvtree
+Section: devel
+Priority: optional
+Maintainer: Marcelo Zimbres <mzimbres@gmail.com>
+Build-Depends: debhelper (>=11~)
+Standards-Version: 4.1.4
+Homepage: https://github.com/mzimbres/tsvtree
+
+Package: tsvtree
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Replaces: tsvtree (<< 1.0.0-1)
+Description: Tool to analyse tsv files.
+ Tool to display the tree underlying TSV data.
+ .
+ This package contains tsvtree.
