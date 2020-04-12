@@ -8,7 +8,7 @@ Homepage: https://github.com/mzimbres/tsvtree
 
 Package: tsvtree
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}, nlohmann-json3-dev
 Replaces: tsvtree (<< 1.0.0-1)
 Description: Tool to analyse tsv files.
  Tool to display the tree underlying TSV data.
