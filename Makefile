@@ -1,7 +1,7 @@
 pkg_name = tsvtree
 pkg_version = 1.0.0
-pkg_revision = 0
-tarball_name = $(pkg_name)-$(pkg_version)-$(pkg_revision)
+debian_version = 0
+tarball_name = $(pkg_name)-$(pkg_version)-$(debian_version)
 tarball_dir = $(pkg_name)-$(pkg_version)
 prefix = /usr
 datarootdir = $(prefix)/share
@@ -20,29 +20,22 @@ CPPFLAGS += -g
 
 VPATH = ./src
 
-exes =
-exes += tsvtree
-exes += treesim
-
-exe_objs = $(addsuffix .o, $(exes))
-
-srcs =
-srcs += tree.hpp tree.cpp
-srcs += tsv.hpp tsv.cpp
-srcs += utils.hpp utils.cpp
-srcs += $(addsuffix .cpp, $(exes))
-
+objs = tree.o tsv.o utils.o tsvtree.o
 aux = Makefile
 
-all: $(exes)
+all: tsvtree treesim
 
 Makefile.dep:
 	-$(CXX) -MM ./src/*.cpp > $@
 
 -include Makefile.dep
 
-tsvtree: % : %.o tree.o utils.o tsv.o
-	$(CXX) -o $@ $^ $(CPPFLAGS) -lboost_program_options
+.PHONY: version
+version:
+	echo "#pragma once\nchar const* version = \"$(pkg_version)\";" > src/version.hpp
+
+tsvtree: $(objs) version
+	$(CXX) -o $@ $(objs) $(CPPFLAGS) -lboost_program_options
 
 treesim: % : %.o
 	$(CXX) -o $@ $^ $(CPPFLAGS)
@@ -52,11 +45,11 @@ install: all
 
 uninstall:
 	rm -f $(bin_final_dir)/tsvtree
-	rmdir $(DESDIR)$(docdir)
+	rmdir $(doc_final_dir)
 
 .PHONY: clean
 clean:
-	rm -f $(exes) $(exe_objs) utils.o tree.o tsv.o $(tarball_name).tar.gz Makefile.dep Makefile.dep
+	rm -f tsvtree treesim treesim.o $(objs) $(tarball_name).tar.gz Makefile.dep Makefile.dep
 	rm -rf tmp
 
 $(tarball_name).tar.gz:

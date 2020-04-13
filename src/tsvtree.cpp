@@ -30,6 +30,7 @@
 #include "tsv.hpp"
 #include "tree.hpp"
 #include "utils.hpp"
+#include "version.hpp"
 
 #include <nlohmann/json.hpp>
 
@@ -386,6 +387,7 @@ auto parse_options(int argc, char* argv[])
    po::options_description desc("Options");
    desc.add_options()
    ( "help,h", "This help message.")
+   ( "version,v", "Program version.")
    ( "tree,k", "Input file in tsv format.")
    ( "indent-with-tab,p", "Uses tab to represent the tree depth.")
    ( "depth,d", po::value<int>(&op.depth)->default_value(std::numeric_limits<int>::max()), "Influences the output.")
@@ -427,6 +429,12 @@ auto parse_options(int argc, char* argv[])
    if (vm.count("help")) {
       op.exit = true;
       std::cout << desc << "\n";
+      return op;
+   }
+
+   if (vm.count("version")) {
+      op.exit = true;
+      std::cout << version << "\n";
       return op;
    }
 
