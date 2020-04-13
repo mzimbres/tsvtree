@@ -58,12 +58,13 @@ $(tarball_name).tar.gz:
 .PHONY: dist
 dist: $(tarball_name).tar.gz
 
+# Add --no-sign to avoid signing the the package.
 .PHONY: deb
 deb: dist
 	rm -rf tmp; mkdir tmp; mv $(tarball_name).tar.gz tmp; cd tmp; \
 	ln $(tarball_name).tar.gz tsvtree_1.0.0.orig.tar.gz; \
 	tar -xvvzf $(tarball_name).tar.gz; \
-	cd $(tarball_dir)/debian; debuild --no-sign -j1
+	cd $(tarball_dir)/debian; debuild -j1 
 
 backup_emails = foo@bar.de
 

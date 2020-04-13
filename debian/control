@@ -1,7 +1,7 @@
 Source: tsvtree
 Section: devel
 Priority: optional
-Maintainer: Marcelo Zimbres <mzimbres@gmail.com>
+Maintainer: Marcelo Zimbres Silva <mzimbres@gmail.com>
 Build-Depends: debhelper (>=11~)
 Standards-Version: 4.1.4
 Homepage: https://github.com/mzimbres/tsvtree
