@@ -159,7 +159,7 @@ Places
 ```
 The `.comp` format will be explained below.
 
-## Leaf counters and node coordinate
+### Leaf counters and node coordinate
 
 Once the tree in `.comp` format is available it is possible to show some useful information about the nodes at a specific depth, such as the number of leaf nodes that are reachable from each node in the tree and their coordinate in the tree. For example
 
