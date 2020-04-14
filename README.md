@@ -6,7 +6,7 @@
 * Compression and serialization.
 * Node information: The number leaf nodes are reachable from an entry and its coordinate in the tree.
 
-The project tries to offer only functionality that is not already available on other command line tools like `awk`, `cut`, `column` etc. It can be seen as a complement to them.
+The project tries to offer only functionality that is not already available on other command line tools like `awk`, `cut`, `column`, tac etc. It can be seen as a complement to them.
 
 ## Showing the tree
 
@@ -56,6 +56,76 @@ Root
 ```
 For large files it is sometimes useful to restrict the output to a certain depth in the tree. As an example let us run `tsvtree` in the `examples/worldcities.comp` file that contains all cities in the world restricting the output depth to 2
 
+### Reading from stdin
+
+When a file is not provided `tsvtree` reads data from standard input, which is very convenient to process the output of standard command line tools. Here are some illustrative examples.
+
+The authors of the last 50 commits on the linux kernel sorted by date
+```bash
+git log --oneline --pretty="%as%x09%an" -n 50 | tsvtree
+Root
+├── 2020-04-09
+│   └── Masahiro Yamada
+├── 2020-04-10
+│   ├── Anshuman Khandual
+│   ├── Arjun Roy
+│   ├── Eric Biggers
+│   ├── Jaewon Kim
+│   ├── Linus Torvalds
+│   ├── Logan Gunthorpe
+│   ├── Pali Rohár
+│   ├── Roman Gushchin
+│   ├── Thomas Gleixner
+│   ├── Vasily Averin
+│   ├── Xiaoyao Li
+│   └── kbuild test robot
+├── 2020-04-11
+│   ├── Linus Torvalds
+│   ├── Sedat Dilek
+│   └── Trond Myklebust
+└── 2020-04-12
+    └── Linus Torvalds
+```
+Last access time on an arbitrary repository.
+```bash
+$ find  . -name *.cpp -printf "%Tm\t%Td\t%f\n" | tsvtree
+Root
+├── 01
+│   ├── 06
+│   │   ├── redis.cpp
+│   │   └── test_clients.cpp
+│   └── 09
+│       ├── notify-test.cpp
+│       └── mms.cpp
+├── 02
+│   ├── 01
+│   │   ├── db.cpp
+│   │   └── key-gen.cpp
+│   ├── 11
+│   │   └── crypto.cpp
+│   └── 12
+│       ├── mms_session.cpp
+│       └── post.cpp
+├── 04
+│   └── 06
+│       └── json.cpp
+└── 12
+    ├── 18
+    │   ├── db_tests.cpp
+    │   ├── logger.cpp
+    │   ├── net.cpp
+    │   └── system.cpp
+    ├── 28
+    │   ├── notifier.cpp
+    │   ├── ntf_session.cpp
+    │   └── notify.cpp
+    └── 31
+        └── sim.cpp
+
+```
+
+### Restricting the depth
+
 ```bash
 $ tsvtree --tree --depth 2  examples/worldcities.comp
 Places
@@ -87,14 +157,45 @@ Places
     ├── Micronesia
     └── Polynesia
 ```
-The `.comp` format will be explained below. If your TSV file does not have the root node on the left and the leaf nodes on the right, you will have to reorder it. This can be easily achieved with `awk`, for example
+The `.comp` format will be explained below.
+
+## Leaf counters and node coordinate
+
+Once the tree in `.comp` format is available it is possible to show some useful information about the nodes at a specific depth, such as the number of leaf nodes that are reachable from each node in the tree and their coordinate in the tree. For example
+
+```bash
+$ tsvtree --tree --depth 2 --output info examples/worldcities.comp | column -t -s $'\t'
+Northern Africa           000.000  99
+Eastern Africa            000.001  109
+Middle Africa             000.002  70
+Southern Africa           000.003  219
+Western Africa            000.004  143
+Caribbean                 001.000  102
+Central America           001.001  226
+South America             001.002  11444
+Northern America          001.003  366
+Central Asia              002.000  42
+Eastern Asia              002.001  1358
+South-eastern Asia        002.002  380
+Southern Asia             002.003  437
+Western Asia              002.004  206
+Northern Europe           003.000  829
+Eastern Europe            003.001  2039
+Southern Europe           003.002  1215
+Western Europe            003.003  46532
+Autralia and New Zealand  004.000  111
+Melanesia                 004.001  77
+Micronesia                004.002  10
+Polynesia                 004.003  14
+```
+If your TSV file does not have the root node on the left and the leaf nodes on the right, you will have to reorder it. This can be easily achieved with `awk`, for example
 
 ```bash
 awk -F$'\t' '{print $3":"$2":"$1}' file.tsv
 ```
 will select columns 1, 2, and 3 of `file.tsv` and reverse them.
 
-## Compressed tree
+## Compressing the tree
 
 TSV files like the one above have a lot of redundancy since the nodes at small depths appear many times in the file. With `tsvtree` it is possible to compress the file by using numbers to represent the depth of the tree. The resulting file can be more than five times smaller then the original TSV
 
@@ -132,32 +233,3 @@ $ tsvtree --tree --output tree examples/worldcities.comp
 ```
 Compressing the data in this form with `gzip` or other compressing tools also produces better results than compressing the original TSV directly. 
 
-## Leaf counters and node coordinate
-
-Once the tree in `.comp` format is available it is possible to show some useful information about the nodes at a specific depth, such as the number of leaf nodes that are reachable from each node in the tree and their coordinate in the tree. For example
-
-```bash
-$ tsvtree --tree --depth 2 --output info examples/worldcities.comp | column -t -s $'\t'
-Northern Africa           000.000  99
-Eastern Africa            000.001  109
-Middle Africa             000.002  70
-Southern Africa           000.003  219
-Western Africa            000.004  143
-Caribbean                 001.000  102
-Central America           001.001  226
-South America             001.002  11444
-Northern America          001.003  366
-Central Asia              002.000  42
-Eastern Asia              002.001  1358
-South-eastern Asia        002.002  380
-Southern Asia             002.003  437
-Western Asia              002.004  206
-Northern Europe           003.000  829
-Eastern Europe            003.001  2039
-Southern Europe           003.002  1215
-Western Europe            003.003  46532
-Autralia and New Zealand  004.000  111
-Melanesia                 004.001  77
-Micronesia                004.002  10
-Polynesia                 004.003  14
-```
