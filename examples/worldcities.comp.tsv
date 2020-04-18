@@ -13604,7 +13604,10 @@
 6	Macro Metropolitana Paulista
 7	Bragança Paulista
 8	Atibaia
-9	Atibaia
+9	Centro
+9	Vila Santista
+9	Jardim Siriema
+9	Alvinópolis
 8	Bom Jesus dos Perdões
 9	Bom Jesus dos Perdões
 8	Bragança Paulista
@@ -31557,37 +31560,48 @@
 6	Matoury
 6	Saint-Laurent-du-Maroni
 4	Grand Est
-5	Ardennes
-6	Charleville-Mézières
-5	Aube
-6	Troyes
-5	Bas-Rhin
-6	Haguenau
-6	Illkirch-Graffenstaden
-6	Schiltigheim
-6	Strasbourg
-5	Haut-Rhin
-6	Colmar
-6	Mulhouse
-5	Haute-Marne
-6	Chaumont
-6	Saint-Dizier
-5	Marne
-6	Châlons-en-Champagne
-6	Reims
-6	Épernay
-5	Meurthe-et-Moselle
-6	Nancy
-6	Vandoeuvre-lès-Nancy
-5	Moselle
-6	Forbach
-6	Metz
-6	Montigny-lès-Metz
-6	Sarreguemines
-6	Thionville
-5	Vosges
-6	Saint-Dié-des-Vosges
-6	Épinal
+5	Elsass
+6	Bas-Rhin
+7	Bischheim              
+7	Haguenau               
+7	Illkirch-Graffenstaden 
+7	Lingolsheim            
+7	Schiltigheim           
+7	Strasbourg             
+7	Sélestat               
+6	Haut-Rhin
+7	Colmar                 
+7	Mülhausen              
+7	Saint-Louis            
+5	Lorraine
+6	Meurthe-et-Moselle
+7	Lunéville
+7	Nancy
+7	Vandœuvre-lès-Nancy
+6	Moselle
+7	Forbach
+7	Metz
+7	Montigny-lès-Metz
+7	Saargemünd
+7	Thionville
+6	Vosges
+7	Saint-Dié-des-Vosges
+7	Épinal
+5	Champagne-Ardenne
+6	Ardennes
+7	Charleville-Mézières
+7	Sedan
+6	Aube
+7	Romilly-sur-Seine
+7	Troyes
+6	Haute-Marne
+7	Chaumont
+7	Saint-Dizier
+6	Marne
+7	Châlons-en-Champagne
+7	Reims
+7	Vitry-le-François
+7	Épernay
 4	Guadeloupe
 5	Guadeloupe
 6	Baie-Mahault
