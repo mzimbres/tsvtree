@@ -14,45 +14,78 @@ Assume a TSV file like the one in `examples/cities.tsv` shown below
 
 ```bash
 $ column examples/cities.tsv -t -s $'\t'
-Brazil   Sao Paulo             Atibaia
-Germany  Nordrhein-Westphalen  Düsseldorf
-Brazil   Sao Paulo             Sao Paulo
-France   Alsacia               Hagenau
-Brazil   Rio de Janeiro        Teresópolis
-Germany  Baden-würtemberg      Stuttgart
-Germany  Baden-würtemberg      Karlsruhe
-France   Alsacia               Strasburg
-Brazil   Rio de Janeiro        Rio de Janeiro
-France   Île-de-France         Sucy-en-Brie
-Germany  Nordrhein-Westphalen  Köln
-France   Île-de-France         Paris
+Earth  America  South America   Brazil   Sudeste              Minas Gerais  Metropolitana de Belo Horizonte  Itabira            Alvinópolis  Alvinópolis
+Earth  America  South America   Brazil   Sudeste              Minas Gerais  Metropolitana de Belo Horizonte  Itabira            Alvinópolis  Major Ezequiel
+Earth  America  South America   Brazil   Sudeste              São Paulo     Macro Metropolitana Paulista     Bragança Paulista  Atibaia      Vila Santista
+Earth  America  South America   Brazil   Sudeste              São Paulo     Macro Metropolitana Paulista     Bragança Paulista  Atibaia      Jardim Siriema
+Earth  America  South America   Brazil   Sudeste              São Paulo     Macro Metropolitana Paulista     Bragança Paulista  Atibaia      Alvinópolis
+Earth  America  South America   Brazil   Sudeste              São Paulo     Macro Metropolitana Paulista     Bragança Paulista  Piracaia     Batatuba
+Earth  America  South America   Brazil   Sudeste              São Paulo     Metropolitana de São Paulo       São Paulo          São Paulo    Mooca
+Earth  America  South America   Brazil   Sudeste              São Paulo     Metropolitana de São Paulo       São Paulo          São Paulo    Vila Leopoldina
+Earth  Europe   Western Europe  Germany  Baden-Württemberg    Karlsruhe     Karlsruhe                        Bruchsal
+Earth  Europe   Western Europe  Germany  Baden-Württemberg    Karlsruhe     Karlsruhe                        Karlsbad
+Earth  Europe   Western Europe  Germany  Baden-Württemberg    Karlsruhe     Rastatt                          Bühl
+Earth  Europe   Western Europe  Germany  Baden-Württemberg    Karlsruhe     Rastatt                          Bühlertal
+Earth  Europe   Western Europe  Germany  Nordrhein-Westfalen  Arnsberg      Ennepe-Ruhr-Kreis                Gevelsberg
+Earth  Europe   Western Europe  Germany  Nordrhein-Westfalen  Arnsberg      Ennepe-Ruhr-Kreis                Hattingen
+Earth  Europe   Western Europe  France   Grand Est            Elsass        Bas-Rhin                         Haguenau
+Earth  Europe   Western Europe  France   Grand Est            Elsass        Bas-Rhin                         Strasbourg
+Earth  Europe   Western Europe  France   Île-de-France        Val-de-Marne  Sucy-en-Brie
 ```
 It is difficult to see the hierarchical nature of the data by looking at it in this form, also, the redundancy is distracting. `tsvtree` can display it in a much more comprehensible tree-like format as shown below
 
 ```bash
 $ tsvtree examples/cities.tsv
-Root
-├── Brazil
-│   ├── Rio de Janeiro
-│   │   ├── Rio de Janeiro
-│   │   └── Teresópolis
-│   └── Sao Paulo
-│       ├── Atibaia
-│       └── Sao Paulo
-├── France
-│   ├── Alsacia
-│   │   ├── Hagenau
-│   │   └── Strasburg
-│   └── Île-de-France
-│       ├── Paris
-│       └── Sucy-en-Brie
-└── Germany
-    ├── Baden-würtemberg
-    │   ├── Karlsruhe
-    │   └── Stuttgart
-    └── Nordrhein-Westphalen
-        ├── Düsseldorf
-        └── Köln
+Earth
+├── America
+│   └── South America
+│       └── Brazil
+│           └── Sudeste
+│               ├── Minas Gerais
+│               │   └── Metropolitana de Belo Horizonte
+│               │       └── Itabira
+│               │           └── Alvinópolis
+│               │               ├── Alvinópolis
+│               │               └── Major Ezequiel
+│               └── São Paulo
+│                   ├── Macro Metropolitana Paulista
+│                   │   └── Bragança Paulista
+│                   │       ├── Atibaia
+│                   │       │   ├── Alvinópolis
+│                   │       │   ├── Jardim Siriema
+│                   │       │   └── Vila Santista
+│                   │       └── Piracaia
+│                   │           └── Batatuba
+│                   └── Metropolitana de São Paulo
+│                       └── São Paulo
+│                           └── São Paulo
+│                               ├── Mooca
+│                               └── Vila Leopoldina
+└── Europe
+    └── Western Europe
+        ├── France
+        │   ├── Grand Est
+        │   │   └── Elsass
+        │   │       └── Bas-Rhin
+        │   │           ├── Haguenau
+        │   │           └── Strasbourg
+        │   └── Île-de-France
+        │       └── Val-de-Marne
+        │           └── Sucy-en-Brie
+        └── Germany
+            ├── Baden-Württemberg
+            │   └── Karlsruhe
+            │       ├── Karlsruhe
+            │       │   ├── Bruchsal
+            │       │   └── Karlsbad
+            │       └── Rastatt
+            │           ├── Bühl
+            │           └── Bühlertal
+            └── Nordrhein-Westfalen
+                └── Arnsberg
+                    └── Ennepe-Ruhr-Kreis
+                        ├── Gevelsberg
+                        └── Hattingen
 ```
 ### Reading from stdin
 
