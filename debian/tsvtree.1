@@ -12,7 +12,7 @@
 .\" First parameter, TSVTREE, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH TSVTREE 1 "10 Apr 2020"
+.TH TSVTREE 1 "18 Apr 2020"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -147,11 +147,22 @@ depth of the output tree to 2.
   $ tsvtree --tree -o tsv file.tree | column -t -s $'\t'
 
 .sp 1
-• Reads a file in tree format and outputs information about the nodes
-at depth 2.
+• Reads a file in tree format and outputs information about the nodes at depth 2.
 .sp 1
 .br
   $ tsvtree --tree -o info file.tree --depth 2 | column -t -s $'\t'
+
+.sp 1
+• The authors of the last 50 commits on the linux kernel sorted by date.
+.sp 1
+.br
+  $ git log --oneline --pretty="%as%x09%an" -n 50 | tsvtree
+
+.sp 1
+• Last 40 commits on the linux kernel excluding Linus Torvalds sorted by author.
+.sp 1
+.br
+  $ git log --oneline --pretty="%ci%x09%h%x09%s%x09%an" -n 40 | grep -v Torvalds | awk -F $'\t' '{print $4"\t"$1" "$2" "$3}' | tsvtree
 
 .SH AUTHOR
 Written by Marcelo Zimbres Silva <mzimbres@gmail.com>.

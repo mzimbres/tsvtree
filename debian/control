@@ -11,6 +11,8 @@ Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Replaces: tsvtree (<< 1.0.0-1)
 Description: Tool to analyse tsv files.
- Tool to display and analyse the tree underlying TSV data.
+ Tool to display and analyse TSV data.
  .
- This package contains tsvtree.
+ tsvtree is a command line tool to display and analyse TSV (Tab Separated
+ Value) files. It can be seen as a complement to text processing tools like
+ awk, cut, column, tac etc.

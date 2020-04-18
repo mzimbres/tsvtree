@@ -117,7 +117,7 @@ Master
 └── 2020-04-12
     └── Linus Torvalds
 ```
-* Last 40 commits on the linux kernel excluding Linus Torvalds sorted by author (so have been removed to make the output shorter).
+* Last 40 commits on the linux kernel excluding Linus Torvalds sorted by author.
 
 ```bash
 git log --oneline --pretty="%ci%x09%h%x09%s%x09%an" -n 40 | grep -v Torvalds | awk -F $'\t' '{print $4"\t"$1" "$2" "$3}' | tsvtree

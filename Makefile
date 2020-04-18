@@ -1,6 +1,6 @@
 pkg_name = tsvtree
 pkg_version = 1.0.0
-debian_version = 0
+debian_version = 1
 tarball_name = $(pkg_name)-$(pkg_version)-$(debian_version)
 tarball_dir = $(pkg_name)-$(pkg_version)
 prefix = /usr
