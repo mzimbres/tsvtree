@@ -1,8 +1,6 @@
 pkg_name = tsvtree
 pkg_version = 1.0.0
-debian_version = 1
-tarball_name = $(pkg_name)-$(pkg_version)-$(debian_version)
-tarball_dir = $(pkg_name)-$(pkg_version)
+tarball_name = $(pkg_name)_$(pkg_version)
 prefix = /usr
 datarootdir = $(prefix)/share
 datadir = $(datarootdir)
@@ -52,19 +50,18 @@ clean:
 	rm -f tsvtree treesim treesim.o $(objs) $(tarball_name).tar.gz Makefile.dep Makefile.dep
 	rm -rf tmp
 
-$(tarball_name).tar.gz:
-	git archive --format=tar.gz --prefix=$(tarball_dir)/ HEAD > $(tarball_name).tar.gz
 
 .PHONY: dist
-dist: $(tarball_name).tar.gz
+dist:
+	git archive --format=tar.gz --prefix=$(pkg_name)-$(pkg_version)/ HEAD > $(tarball_name).tar.gz
 
 # Add --no-sign to avoid signing the the package.
 .PHONY: deb
 deb: dist
 	rm -rf tmp; mkdir tmp; mv $(tarball_name).tar.gz tmp; cd tmp; \
-	ln $(tarball_name).tar.gz tsvtree_1.0.0.orig.tar.gz; \
+	ln $(tarball_name).tar.gz $(tarball_name).orig.tar.gz; \
 	tar -xvvzf $(tarball_name).tar.gz; \
-	cd $(tarball_dir)/debian; debuild -j1 
+	cd $(pkg_name)-$(pkg_version)/debian; debuild -j1 
 
 backup_emails = foo@bar.de
 
