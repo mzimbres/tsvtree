@@ -10,6 +10,7 @@ srcdir = .
 
 bin_final_dir = $(DESTDIR)$(bindir)
 doc_final_dir = $(DESTDIR)$(docdir)
+man_final_dir = $(DESTDIR)$(datarootdir)/man
 
 CPPFLAGS += -std=c++17 -Wall -Werror
 CPPFLAGS += -I. -I$./src
@@ -32,7 +33,7 @@ Makefile.dep:
 version:
 	echo "#pragma once\nchar const* version = \"$(pkg_version)\";" > src/version.hpp
 
-tsvtree: $(objs) version
+tsvtree: $(objs)
 	$(CXX) -o $@ $(objs) $(CPPFLAGS) -lboost_program_options
 
 treesim: % : %.o
@@ -41,9 +42,11 @@ treesim: % : %.o
 install: all
 	install -D tsvtree --target-directory $(bin_final_dir)
 	install --mode=664 -D examples/cities.tsv --target-directory $(doc_final_dir)/examples
+	install --mode=444 -D doc/$(pkg_name).1 --target-directory $(man_final_dir)/man1
 
 uninstall:
 	rm -f $(bin_final_dir)/tsvtree
+	rm -f $(man_final_dir)/man1/$(pkg_name).1
 	rm -rf $(doc_final_dir)
 
 .PHONY: clean
