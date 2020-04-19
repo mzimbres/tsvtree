@@ -1,5 +1,5 @@
 tsvtree for Debian
 
-Tool to display and analyse TSV data.
+Command line tool to display and compress TSV data in tree format.
 
  -- Marcelo Zimbres Silva <mzimbres@gmail.com>  Sat, 18 Apr 2020 20:45:00 +0200

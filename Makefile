@@ -40,10 +40,11 @@ treesim: % : %.o
 
 install: all
 	install -D tsvtree --target-directory $(bin_final_dir)
+	install --mode=664 -D examples/cities.tsv --target-directory $(doc_final_dir)/examples
 
 uninstall:
 	rm -f $(bin_final_dir)/tsvtree
-	rmdir $(doc_final_dir)
+	rm -rf $(doc_final_dir)
 
 .PHONY: clean
 clean:
@@ -61,7 +62,7 @@ deb: dist
 	rm -rf tmp; mkdir tmp; mv $(tarball).tar.gz tmp; cd tmp; \
 	ln $(tarball).tar.gz $(pkg_name)_$(pkg_version).orig.tar.gz; \
 	tar -xvvzf $(tarball).tar.gz; \
-	cd $(tarball)/debian; debuild -j1 
+	cd $(tarball)/debian; debuild -j1
 
 backup_emails = foo@bar.de
 

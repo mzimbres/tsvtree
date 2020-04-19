@@ -49,7 +49,7 @@ means it may be used in some CSV files as well.
 .br
 .SH OPTIONS
 .\"These programs follow the usual GNU command line syntax, with long options starting with two dashes (`-').
-The available aptions are
+The available options are
 
 .TP
 .B \-h, \-\-help
@@ -91,13 +91,13 @@ there is any intention in reading the output tree back with
 .TP
 .B \-d, \-\-depth=DEPTH
 Restricts the depth of the three in the output. At the moment this
-works only with option 
+works only with option
 .B --tree.
 
 .TP
 .B \-f, \-\-file=PATH
 The file containing TSV or tree data (as output by this program). If
-not provided data is read from stdin.
+not provided data is read from standard input.
 
 .TP
 .B \-e, \-\-input-separator=CHARACTER
@@ -117,7 +117,7 @@ The output separator used in the output data. Defaults to tab.
 
 .TP
 .B \-c, \-\-check-leaf-min-depth=N
-Checks if the depth has at least the depth passed. Outputs Ok or Fail.
+Checks if the depth has at least the depth passed. Outputs OK or Fail.
 
 .SH EXAMPLES
 Some useful examples
@@ -153,13 +153,13 @@ depth of the output tree to 2.
   $ tsvtree --tree -o info file.tree --depth 2 | column -t -s $'\t'
 
 .sp 1
-• The authors of the last 50 commits on the linux kernel sorted by date.
+• The authors of the last 50 commits on the Linux kernel sorted by date.
 .sp 1
 .br
   $ git log --oneline --pretty="%as%x09%an" -n 50 | tsvtree
 
 .sp 1
-• Last 40 commits on the linux kernel excluding Linus Torvalds sorted by author.
+• Last 40 commits on the Linux kernel excluding Linus Torvalds sorted by author.
 .sp 1
 .br
   $ git log --oneline --pretty="%ci%x09%h%x09%s%x09%an" -n 40 | grep -v Torvalds | awk -F $'\t' '{print $4"\t"$1" "$2" "$3}' | tsvtree
