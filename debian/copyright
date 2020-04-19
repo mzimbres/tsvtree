@@ -1,9 +1,0 @@
-Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Contact: Marcelo Zimbres Silva <mzimbres@gmail.com>
-Upstream-Name: tsvtree
-Source: https://github.com/mzimbres/tsvtree
-
-Files:     *
-Copyright: Copyright 2020  Marcelo Zimbres Silva <mzimbres@gmail.com>
-License: GPL-3
- See the license in /usr/share/common-licenses/GPL-3.

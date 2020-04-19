@@ -1,5 +1,5 @@
 pkg_name = tsvtree
-pkg_version = 1.0.1
+pkg_version = 1.0.2
 tarball = $(pkg_name)-$(pkg_version)
 prefix = /usr
 datarootdir = $(prefix)/share
@@ -58,14 +58,6 @@ clean:
 .PHONY: dist
 dist:
 	git archive --format=tar.gz --prefix=$(tarball)/ HEAD > $(tarball).tar.gz
-
-# Add --no-sign to avoid signing the the package.
-.PHONY: deb
-deb: dist
-	rm -rf tmp; mkdir tmp; mv $(tarball).tar.gz tmp; cd tmp; \
-	ln $(tarball).tar.gz $(pkg_name)_$(pkg_version).orig.tar.gz; \
-	tar -xvvzf $(tarball).tar.gz; \
-	cd $(tarball)/debian; debuild -j1
 
 backup_emails = foo@bar.de
 

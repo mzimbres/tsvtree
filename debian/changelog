@@ -1,5 +1,0 @@
-tsvtree (1.0.1-1) stable; urgency=low
-
-  * First release, closes: bug#956526.
-
- -- Marcelo Zimbres Silva <mzimbres@gmail.com>  Sun, 19 Apr 2020 12:31:00 +0200
