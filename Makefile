@@ -22,7 +22,7 @@ VPATH = ./src
 objs = tree.o tsv.o utils.o tsvtree.o
 aux = Makefile
 
-all: tsvtree treesim
+all: tsvtree treesim test
 
 Makefile.dep:
 	-$(CXX) -MM ./src/*.cpp > $@
@@ -39,6 +39,13 @@ tsvtree: $(objs)
 treesim: % : %.o
 	$(CXX) -o $@ $^ $(CPPFLAGS)
 
+test: % : %.o
+	$(CXX) -o $@ $^ $(CPPFLAGS)
+
+.PHONY: check
+check: test
+	./test
+
 install: all
 	install -D tsvtree --target-directory $(bin_final_dir)
 	install --mode=664 -D examples/cities.tsv --target-directory $(doc_final_dir)/examples
@@ -51,7 +58,7 @@ uninstall:
 
 .PHONY: clean
 clean:
-	rm -f tsvtree treesim treesim.o $(objs) $(tarball).tar.gz Makefile.dep Makefile.dep
+	rm -f test test.o tsvtree treesim treesim.o $(objs) $(tarball).tar.gz Makefile.dep Makefile.dep
 	rm -rf tmp
 
 
