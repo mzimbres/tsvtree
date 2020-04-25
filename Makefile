@@ -21,7 +21,7 @@ CPPFLAGS += $(CXXFLAGS)
 objs = tree.o tsv.o utils.o tsvtree.o
 aux = Makefile
 
-all: tsvtree treesim test
+all: tsvtree tsvsim
 
 Makefile.dep:
 	-$(CXX) -MM ./src/*.cpp > $@
@@ -35,15 +35,12 @@ version:
 tsvtree: $(objs)
 	$(CXX) -o $@ $(objs) $(CPPFLAGS) -lboost_program_options $(LDFLAGS)
 
-treesim: % : %.o
-	$(CXX) -o $@ $^ $(CPPFLAGS) $(LDFLAGS)
-
-test: % : %.o
+tsvsim: % : %.o
 	$(CXX) -o $@ $^ $(CPPFLAGS) $(LDFLAGS)
 
 .PHONY: check
-check: test
-	./test
+check:
+	./src/check.sh
 
 install: all
 	install -D tsvtree --target-directory $(bin_final_dir)
@@ -57,7 +54,7 @@ uninstall:
 
 .PHONY: clean
 clean:
-	rm -f test test.o tsvtree treesim treesim.o $(objs) $(tarball).tar.gz Makefile.dep Makefile.dep
+	rm -f tsvtree tsvsim tsvsim.o $(objs) $(tarball).tar.gz Makefile.dep Makefile.dep
 	rm -rf tmp
 
 

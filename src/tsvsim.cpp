@@ -19,8 +19,6 @@
 #include <iostream>
 #include <random>
 
-char const table[] = {"abcdefghijklmopqrstuv"};
-
 template <class R>
 auto make_random_text(R r, int size)
 {
@@ -29,53 +27,27 @@ auto make_random_text(R r, int size)
    return s;
 }
 
-template <class R>
-auto make_random_indent(R r, int last)
-{
-   if (last < 0)
-      return 0;
-
-   if (last < 1)
-      return 1;
-
-   auto const d = 2 * 10 * r();
-   if (d > last && d > 10)
-      return last + 1;
-
-   if ((d + 10) > last)
-      return last;
-
-   if (d < 2)
-      return 1;
-
-   if ((d + 5) > last)
-      return last - 1;
-
-   return int(d);
-}
-
 int main(int argc, char* argv[])
 {
-   int length = 10;
-   if (argc > 1)
-      length = std::stoi(argv[1]);
+   int lines = 10;
+   int depth = 10;
+   int word_length = 4;
+   int seed = 1;
 
-   std::mt19937 gen(1);
+   if (argc > 1) lines = std::stoi(argv[1]);
+   if (argc > 2) depth = std::stoi(argv[2]);
+   if (argc > 3) word_length = std::stoi(argv[3]);
+   if (argc > 4) seed = std::stoi(argv[4]);
 
-   std::uniform_real_distribution<double> indent_dis(0, 1);
-   auto f = [&]()
-      { return indent_dis(gen); };
+   std::mt19937 gen(seed);
 
-   std::uniform_int_distribution<int> words_dis('a', 'z');
+   std::uniform_int_distribution<int> words_dis('a', 'a' + word_length);
    auto g = [&]()
       { return words_dis(gen); };
 
-   auto last = -1;
-   for (auto i = 0; i < length; ++i) {
-      auto const indent = make_random_indent(f, last);
-      std::cout
-      << indent << '\t'
-      << make_random_text(g, 7) << '\n';
-      last = indent;
+   for (auto i = 0; i < lines; ++i) {
+      for (auto i = 0; i < depth; ++i)
+         std::cout << make_random_text(g, word_length) << '\t';
+      std::cout << '\n';
    }
 }
