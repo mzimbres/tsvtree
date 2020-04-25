@@ -12,12 +12,11 @@ bin_final_dir = $(DESTDIR)$(bindir)
 doc_final_dir = $(DESTDIR)$(docdir)
 man_final_dir = $(DESTDIR)$(datarootdir)/man
 
-CPPFLAGS += -std=c++17 -Wall -Werror
-CPPFLAGS += -I. -I$./src
-CPPFLAGS += $(CXXFLAGS)
-CPPFLAGS += -g
-
 VPATH = ./src
+
+CPPFLAGS += -std=c++17 -Wall -Werror
+CPPFLAGS += -I$./src
+CPPFLAGS += $(CXXFLAGS)
 
 objs = tree.o tsv.o utils.o tsvtree.o
 aux = Makefile
@@ -34,13 +33,13 @@ version:
 	echo "#pragma once\nchar const* version = \"$(pkg_version)\";" > src/version.hpp
 
 tsvtree: $(objs)
-	$(CXX) -o $@ $(objs) $(CPPFLAGS) -lboost_program_options
+	$(CXX) -o $@ $(objs) $(CPPFLAGS) -lboost_program_options $(LDFLAGS)
 
 treesim: % : %.o
-	$(CXX) -o $@ $^ $(CPPFLAGS)
+	$(CXX) -o $@ $^ $(CPPFLAGS) $(LDFLAGS)
 
 test: % : %.o
-	$(CXX) -o $@ $^ $(CPPFLAGS)
+	$(CXX) -o $@ $^ $(CPPFLAGS) $(LDFLAGS)
 
 .PHONY: check
 check: test
