@@ -180,10 +180,10 @@ Root
 
 ### Restricting the depth
 
-For large files it is sometimes useful to restrict the output to a certain depth in the tree. As an example let us run `tsvtree` in the `examples/worldcities.comp` file that contains all cities in the world restricting the output depth to 2
+For large files it is sometimes useful to restrict the output to a certain depth in the tree. As an example let us run `tsvtree` on file [this](https://github.com/mzimbres/trees/blob/master/worldcities.tree.comp.tsv) file that contains all cities in the world restricting the output depth to 2
 
 ```bash
-$ tsvtree --tree --depth 2  examples/worldcities.comp
+$ tsvtree --tree --depth 2  worldcities.comp
 Places
 ├── Africa
 │   ├── Northern Africa
@@ -245,11 +245,11 @@ $ tsvtree --output comp examples/cities.tsv
 3	Köln
 ```
 
-The file `examples/worldcities.comp` in the compressed format has the 456 kbytes in size whereas the same data in TSV format has 2064 kbytes, namely more that five times larger. To decompress it again to either TSV or tree format run
+The file `worldcities.comp` in the compressed format has the 456 kbytes in size whereas the same data in TSV format has 2064 kbytes, namely more that five times larger. To decompress it again to either TSV or tree format run
 
 ```bash
-$ tsvtree --tree --output tsv examples/worldcities.comp
-$ tsvtree --tree --output tree examples/worldcities.comp
+$ tsvtree --tree --output tsv worldcities.comp
+$ tsvtree --tree --output tree worldcities.comp
 ```
 Compressing the data in this form with `gzip` or other compressing tools also produces better results than compressing the original TSV directly. 
 
@@ -258,7 +258,7 @@ Compressing the data in this form with `gzip` or other compressing tools also pr
 Once the tree in `.comp` format is available it is possible to show some useful information about the nodes at a specific depth, such as the number of leaf nodes that are reachable from each node in the tree and their coordinate in the tree. For example
 
 ```bash
-$ tsvtree --tree --depth 2 --output info examples/worldcities.comp | column -t -s $'\t'
+$ tsvtree --tree --depth 2 --output info worldcities.comp | column -t -s $'\t'
 Northern Africa           000.000  99
 Eastern Africa            000.001  109
 Middle Africa             000.002  70
