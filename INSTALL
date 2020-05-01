@@ -2,6 +2,7 @@ On debian systems
 
    $ sudo apt-get install nlohmann-json3-dev
    $ sudo apt-get install libboost-program-options-dev
+   $ sudo apt-get install libfmt3-dev
    $ make
    $ sudo make install
 

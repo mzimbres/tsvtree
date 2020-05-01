@@ -39,7 +39,7 @@ public:
    };
 
    struct config {
-     enum class format {tabs, counter, tsv, deco};
+     enum class format {tabs, counter, tsv, deco, tikz};
      char field_sep = '\t';
      char line_break = '\n';
      format fmt = format::tabs;

@@ -43,7 +43,7 @@ to_channel_codes(std::vector<std::vector<int>> const& o,
                  int depth,
                  int max);
 
-std::string to_string(std::vector<int> const& v);
+std::string to_string(std::vector<int> const& v, char delimiter = '.');
 
 std::string make_deco_indent(int depth, std::vector<bool> const& lasts);
 

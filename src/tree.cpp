@@ -34,6 +34,8 @@
 #include "utils.hpp"
 #include "tsv.hpp"
 
+#include <fmt/format.h>
+
 namespace tsvtree
 {
 
@@ -244,11 +246,15 @@ void tree::load_leaf_counters()
    std::for_each(std::cbegin(view), std::cend(view), f);
 }
 
+auto const* tikz_node = "\\treenode ({0}) at ({1}, {2}) {{{3}}};";
+auto const* tikz_arrow = "\\treearrow ({0}.west) to ({1}, {2}) to ({3}.south west);";
+
 auto
 node_dump(tree::node const& node,
           tree::config::format of,
           char field_sep,
-          std::vector<bool> const& lasts)
+          std::vector<bool> const& lasts,
+	  int line)
 {
    auto const depth = std::size(node.code);
 
@@ -272,6 +278,22 @@ node_dump(tree::node const& node,
       return ret;
    }
 
+   if (of == tree::config::format::tikz) {
+      auto const name = "n" + to_string(node.code, '-');
+      auto const x = std::size(node.code);
+      auto y = - line * 0.6;
+      auto node_line = fmt::format(tikz_node, name, x, y, node.name);
+      if (x != 0) {
+	 auto const parent_code =
+            std::vector<int>{std::begin(node.code), std::prev(std::end(node.code))};
+	 auto const parent_name = "n" + to_string(parent_code, '-');
+	 y += 0.3;
+	 node_line += "\n";
+         node_line += fmt::format(tikz_arrow, name, x - 1, y, parent_name);
+      }
+      return node_line;
+   }
+
    return to_string(node.code);
 }
 
@@ -285,8 +307,9 @@ serialize(tree& t,
    tree_tsv_view view {t, max_depth};
 
    std::string ret;
+   int line = 0;
    for (auto iter = std::begin(view); iter != std::end(view); ++iter) {
-      ret += node_dump(*iter, of, field_sep, iter.lasts());
+      ret += node_dump(*iter, of, field_sep, iter.lasts(), line++);
       ret += line_break;
    }
    return ret;

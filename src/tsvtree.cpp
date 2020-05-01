@@ -147,6 +147,7 @@ auto to_oformat(int i)
    if (i == 1) return tree::config::format::tabs;
    if (i == 2) return tree::config::format::counter;
    if (i == 7) return tree::config::format::deco;
+   if (i == 8) return tree::config::format::tikz;
 
    throw std::runtime_error("to_oformat: Invalid input.");
    return tree::config::format::tabs;
@@ -359,6 +360,7 @@ int impl(options const& op)
    if (op.oformat == 5) return op5(op);
    if (op.oformat == 6) return op6(op);
    if (op.oformat == 7) return op1(op);
+   if (op.oformat == 8) return op1(op);
 
    return 1;
 }
@@ -377,6 +379,7 @@ auto make_oformat(std::string const& s, bool deco)
    if (s == "json-comp")        return 4;
    if (s == "json-level-codes") return 5;
    if (s == "tsv")              return 6;
+   if (s == "tikz")             return 8;
    return -1;
 }
 

@@ -33,7 +33,7 @@ version:
 	echo "#pragma once\nchar const* version = \"$(pkg_version)\";" > src/version.hpp
 
 tsvtree: $(objs)
-	$(CXX) -o $@ $(objs) $(CPPFLAGS) -lboost_program_options $(LDFLAGS)
+	$(CXX) -o $@ $(objs) $(CPPFLAGS) -lfmt -lboost_program_options $(LDFLAGS)
 
 tsvsim: % : %.o
 	$(CXX) -o $@ $^ $(CPPFLAGS) $(LDFLAGS)

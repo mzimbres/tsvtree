@@ -127,7 +127,7 @@ std::string to_str(int i)
    return to_str_raw(i, 10, '0');
 }
 
-std::string to_string(std::vector<int> const& v)
+std::string to_string(std::vector<int> const& v, char delimiter)
 {
    if (std::empty(v))
       return {};
@@ -137,7 +137,7 @@ std::string to_string(std::vector<int> const& v)
 
    std::string code;
    for (auto i = 0; i != ssize(v) - 1; ++i)
-      code += to_str_raw(v[i], 3, '0') + ".";
+      code += to_str_raw(v[i], 3, '0') + delimiter;
 
    code += to_str_raw(v.back(), 3, '0');
    return code;
