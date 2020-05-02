@@ -8,7 +8,7 @@
 
 It can be seen as a complement to text processing tools like `awk`, `cut`, `column`, `tac` etc. `tsvtree` is also caplable of outputing `tikz` format, for example
 
-![Example tree](https://github.com/mzimbres/tsvtree/tree/master/doc/tree.png)
+![Example](doc/tree.png?raw=true)
 
 ## Showing the tree
 
