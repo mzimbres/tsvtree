@@ -246,80 +246,8 @@ void tree::load_leaf_counters()
    std::for_each(std::cbegin(view), std::cend(view), f);
 }
 
-auto const* tikz_node = "\\treenode[fill={0}!50] ({1}) at ({2}, {3}) {{{4}}};";
-auto const* tikz_arrow = "\\treearrow[color={0}] ({1}.west) to ({2}, {3}) to ({4}.south west);";
-
-std::vector<std::string> const& node_colors =
-{ "Apricot"
-, "Mulberry"
-, "RoyalPurple"
-, "SpringGreen"
-, "Cyan"
-, "BurntOrange"
-, "CadetBlue"
-, "Maroon"
-, "Orchid"
-, "PineGreen"
-, "Aquamarine"
-, "RedViolet"
-, "Bittersweet"
-, "Rhodamine"
-//, "Black"
-, "Cerulean"
-, "Red"
-, "Brown"
-, "YellowOrange"
-, "RubineRed"
-, "Peach"
-, "Turquoise"
-, "JungleGreen"
-, "RawSienna"
-, "ForestGreen"
-, "MidnightBlue"
-, "Mahogany"
-, "VioletRed"
-, "LimeGreen"
-, "Salmon"
-, "YellowGreen"
-, "Magenta"
-, "Plum"
-, "WildStrawberry"
-, "Orange"
-, "Green"
-, "Sepia"
-, "Gray"
-, "DarkOrchid"
-, "CornflowerBlue"
-, "Yellow"
-, "RoyalBlue"
-, "Periwinkle"
-, "BlueGreen"
-, "GreenYellow"
-, "Thistle"
-, "Emerald"
-, "SeaGreen"
-, "NavyBlue"
-, "CarnationPink"
-, "Lavender"
-, "BrickRed"
-, "Melon"
-, "Fuchsia"
-, "Purple"
-, "Blue"
-, "RedOrange"
-, "SkyBlue"
-, "OrangeRed"
-, "Violet"
-, "Goldenrod"
-, "OliveGreen"
-, "ProcessBlue"
-, "TealBlue"
-, "White"
-, "BlueViolet"
-, "Dandelion"
-, "Tan"
-};
-
+auto const* tikz_node = "\\treenode[fill=red!{0}!black!70] ({1}) at ({2}pt, {3}pt) {{\\color{{white}}{4}}};";
+auto const* tikz_arrow = "\\treearrow[color=red!{0}!black!70] ({1}.west) to ({2}pt, {3}pt) to ({4}.south west);";
 
 auto
 node_dump(tree::node const& node,
@@ -328,7 +256,7 @@ node_dump(tree::node const& node,
           std::vector<bool> const& lasts,
 	  int line)
 {
-   auto const depth = std::size(node.code);
+   auto const depth = ssize(node.code);
 
    if (of == tree::config::format::tabs) {
       std::string ret(depth, '\t');
@@ -351,19 +279,25 @@ node_dump(tree::node const& node,
    }
 
    if (of == tree::config::format::tikz) {
+      auto const y_step = 15;
+      auto const x_step = 20;
       auto const name = "n" + to_string(node.code, '-');
-      auto const x = std::size(node.code);
-      auto y = - line * 0.45;
-      auto const color_idx = x % std::size(node_colors);
-      auto const color = node_colors[color_idx];
-      auto node_line = fmt::format(tikz_node, color, name, x, y, node.name);
-      if (x != 0) {
-	 auto const parent_code =
-            std::vector<int>{std::begin(node.code), std::prev(std::end(node.code))};
+      auto const x = depth * x_step;
+      auto y = - line * y_step;
+      auto color =  5 * depth;
+      color = color > 100 ? 100 : color;
+      color = color < 1 ? 1 : color;
+      //auto const color_b = 100 - color;
+      auto const color_a = color;
+      auto node_line = fmt::format(tikz_node, color_a, name, x, y, node.name);
+      if (depth != 0) {
+	 std::vector<int> const parent_code =
+            {std::begin(node.code), std::prev(std::end(node.code))};
 	 auto const parent_name = "n" + to_string(parent_code, '-');
-	 y += 0.3;
+	 y += y_step / 2;
 	 node_line += "\n";
-         node_line += fmt::format(tikz_arrow, color, name, x - 1, y, parent_name);
+         node_line +=
+            fmt::format(tikz_arrow, color_a, name, (depth - 1) * x_step, y, parent_name);
       }
       return node_line;
    }

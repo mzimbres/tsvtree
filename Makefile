@@ -16,7 +16,7 @@ VPATH = ./src
 
 CPPFLAGS += -std=c++17 -Wall -Werror
 CPPFLAGS += -I$./src
-CPPFLAGS += $(CXXFLAGS)
+CPPFLAGS += -g $(CXXFLAGS)
 
 objs = tree.o tsv.o utils.o tsvtree.o
 aux = Makefile

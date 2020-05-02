@@ -335,8 +335,8 @@ auto op1(options const& op)
       "\\usetikzlibrary{arrows}\n"
       "\n"
       "\\colorlet{memC}{Apricot}\n"
-      "\\tikzstyle{treenode}=[anchor=south west, rounded corners=2pt, node distance=0cm, fill=memC,shape=rectangle,minimum height=0.0cm  ,minimum width=0.5cm  ,inner sep=2pt]\n"
-      "\\tikzstyle{textnode}=[anchor=south west, rounded corners=2pt, node distance=0cm, shape=rectangle,minimum height=0.0cm  ,minimum width=0.5cm  ,inner sep=2pt]\n"
+      "\\tikzstyle{treenode}=[anchor=south west, rounded corners=2pt, node distance=0pt, fill=memC,shape=rectangle,minimum height=12pt, minimum width=0pt, inner sep=3pt]\n"
+      "\\tikzstyle{textnode}=[anchor=south west, rounded corners=2pt, node distance=0pt, shape=rectangle,minimum height=0.0cm  ,minimum width=0.5cm  ,inner sep=2pt]\n"
       "\\tikzstyle{marrow}=[very thick, densely dotted,>=stealth,->, color=black]\n"
       "\\tikzstyle{treearrow}=[rounded corners=8pt, very thick, >=stealth,<-, color=black]\n"
       "\\def\\treenode{\\node[style=treenode]}\n"
@@ -350,8 +350,8 @@ auto op1(options const& op)
       "\\beginpgfgraphicnamed{tree-f0}\n"
       "   \\begin{tikzpicture}[scale=1.0]\n"
       "%\\fill[color=brown!40] (-1,1) rectangle (15, -13);\n"
-      "\\shade[left color=brown!80,right color=brown!20!yellow!10] (-1,3) rectangle +(15,-15);\n"
-      "\\textnode at (5, 1) {\\huge\\bf Title};\n";
+      "\\shade[left color=brown,right color=brown!20] (-1,3) rectangle +(15,-15);\n"
+      "\\textnode at (3, 1) {\\huge\\bf Title};\n";
    }
 
    std::cout << out << std::flush;
