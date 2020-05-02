@@ -316,15 +316,52 @@ auto op1(options const& op)
 
    auto const cfg = op.make_tree_cfg(content, op.tsv);
    tree t {content, cfg};
+   auto const format = to_oformat(op.oformat);
 
    auto const out =
       serialize(t,
-                to_oformat(op.oformat),
+                format,
                 op.out_line_break,
                 op.depth,
                 op.out_field_sep);
 
+   if (format == tree::config::format::tikz) {
+      std::cout <<
+      "\\documentclass[11pt]{article}\n"
+      "\\usepackage{graphics}\n"
+      "\\usepackage[dvipsnames]{xcolor}\n"
+      "\\usepackage{tikz}\n"
+      "\\usetikzlibrary{positioning}\n"
+      "\\usetikzlibrary{arrows}\n"
+      "\n"
+      "\\colorlet{memC}{Apricot}\n"
+      "\\tikzstyle{treenode}=[anchor=south west, rounded corners=2pt, node distance=0cm, fill=memC,shape=rectangle,minimum height=0.0cm  ,minimum width=0.5cm  ,inner sep=2pt]\n"
+      "\\tikzstyle{textnode}=[anchor=south west, rounded corners=2pt, node distance=0cm, shape=rectangle,minimum height=0.0cm  ,minimum width=0.5cm  ,inner sep=2pt]\n"
+      "\\tikzstyle{marrow}=[very thick, densely dotted,>=stealth,->, color=black]\n"
+      "\\tikzstyle{treearrow}=[rounded corners=8pt, very thick, >=stealth,<-, color=black]\n"
+      "\\def\\treenode{\\node[style=treenode]}\n"
+      "\\def\\textnode{\\node[style=textnode]}\n"
+      "\\def\\marrow{\\draw[style=marrow]}\n"
+      "\\def\\treearrow{\\draw[style=treearrow]}\n"
+      "\n"
+      "\\pgfrealjobname{tree}\n"
+      "\n"
+      "\\begin{document}\n"
+      "\\beginpgfgraphicnamed{tree-f0}\n"
+      "   \\begin{tikzpicture}[scale=1.0]\n"
+      "%\\fill[color=brown!40] (-1,1) rectangle (15, -13);\n"
+      "\\shade[left color=brown!80,right color=brown!20!yellow!10] (-1,3) rectangle +(15,-15);\n"
+      "\\textnode at (5, 1) {\\huge\\bf Title};\n";
+   }
+
    std::cout << out << std::flush;
+
+   if (format == tree::config::format::tikz) {
+      std::cout <<
+      "\\end{tikzpicture}\n"
+      "\\endpgfgraphicnamed\n"
+      "\\end{document}\n";
+   }
 
    return 0;
 }
