@@ -85,6 +85,8 @@ struct options {
    bool tsv = true;
    bool decorate_tree = true;
 
+   tree::config::tikz tikz_conf;
+
    auto
    make_tree_cfg(std::string const& content,
                  bool tsv_arg) const
@@ -216,7 +218,8 @@ auto to_tree_elem(options const& op)
                 tree::config::format::counter,
                 op.out_line_break,
                 std::numeric_limits<int>::max(),
-                op.out_field_sep);
+                op.out_field_sep,
+		op.tikz_conf);
 
    return tree_elem {raw, info.depth, info.version};
 }
@@ -323,7 +326,8 @@ auto op1(options const& op)
                 format,
                 op.out_line_break,
                 op.depth,
-                op.out_field_sep);
+                op.out_field_sep,
+		op.tikz_conf);
 
    if (format == tree::config::format::tikz) {
       std::cout <<
@@ -350,7 +354,7 @@ auto op1(options const& op)
       "\\beginpgfgraphicnamed{tree-f0}\n"
       "   \\begin{tikzpicture}[scale=1.0]\n"
       "%\\fill[color=brown!40] (-1,1) rectangle (15, -13);\n"
-      "\\shade[left color=white!70!black,right color=white!90!black] (-1,3) rectangle +(15,-15);\n"
+      "\\shade[left color=BlueViolet!50,right color=BlueViolet!10] (-1,3) rectangle +(15,-15);\n"
       "\\textnode at (3, 1) {\\huge\\bf Title};\n";
    }
 
@@ -447,6 +451,12 @@ auto parse_options(int argc, char* argv[])
      //" json-tree: \tTree is output in json.\n" // Let undocumented.
      //" json-leaf-codes: \tCodes at --depth in json."
    )
+   ( "tikz-x-step,x", po::value<int>(&op.tikz_conf.x_step)->default_value(20), "Node horizontal distance in point units.")
+   ( "tikz-y-step,y", po::value<int>(&op.tikz_conf.y_step)->default_value(16), "Node vertical distance in point units.")
+   ( "tikz-color-min,a", po::value<int>(&op.tikz_conf.min)->default_value(30), "Right color minimum.")
+   ( "tikz-color-max,g", po::value<int>(&op.tikz_conf.max)->default_value(60), "Right colot maximum.")
+   ( "tikz-right-color,i", po::value<std::string>(&op.tikz_conf.right_color)->default_value("Dandelion"), "Color of the right nodes.")
+   ( "tikz-left-color,j", po::value<std::string>(&op.tikz_conf.left_color)->default_value("White"), "Color of the node left nodes.")
    ;
 
    po::positional_options_description pos;

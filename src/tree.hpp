@@ -40,9 +40,19 @@ public:
 
    struct config {
      enum class format {tabs, counter, tsv, deco, tikz};
+     struct tikz {
+        int y_step = 16;
+        int x_step = 20;
+        int min = 30;
+        int max = 60;
+        std::string right_color = "Orange";
+        std::string left_color = "white";
+     };
+
      char field_sep = '\t';
      char line_break = '\n';
      format fmt = format::tabs;
+     tikz tikz_conf;
    };
 
 private:
@@ -267,7 +277,8 @@ serialize(tree& t,
           tree::config::format of,
           char line_sep,
           int max_depth,
-          char field_sep);
+          char field_sep,
+	  tree::config::tikz const& conf = {});
 
 
 }

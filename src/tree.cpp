@@ -253,8 +253,11 @@ void tree::load_leaf_counters()
    std::for_each(std::cbegin(view), std::cend(view), f);
 }
 
-auto const* tikz_node = "\\treenode[fill={}!{}!{}] ({}) at ({}pt, {}pt) {{\\color{{black}}{}}};";
-auto const* tikz_arrow = "\\treearrow[color={}!{}!{}] ({}.west) to ({}pt, {}pt) to ({}.south west);";
+auto const* tikz_node =
+   "\\treenode[fill={}!{}!{}] ({}) at ({}pt, {}pt) {{\\color{{black}}{}}};";
+
+auto const* tikz_arrow =
+   "\\treearrow[color=Gray] ({}.west) to ({}pt, {}pt) to ({}.south west);";
 
 auto
 node_dump(tree::node const& node,
@@ -262,7 +265,8 @@ node_dump(tree::node const& node,
           char field_sep,
           std::vector<bool> const& lasts,
 	  int line,
-	  int max_depth)
+	  int max_depth,
+	  tree::config::tikz const& conf)
 {
    auto const depth = ssize(node.code);
 
@@ -287,43 +291,33 @@ node_dump(tree::node const& node,
    }
 
    if (of == tree::config::format::tikz) {
-      auto const y_step = 16;
-      auto const x_step = 20;
-      auto const min = 30;
-      auto const max = 80;
-      std::string const right_color = "white";
-      std::string const left_color = "Orange";
+      auto const x = depth * conf.x_step;
+      auto y = - line * conf.y_step;
 
-      auto const x = depth * x_step;
-      auto y = - line * y_step;
-
-      auto const color_step = double(max - min) / max_depth;
-      auto const color = min + static_cast<int>((depth - 1) * color_step);
+      auto const color_step = double(conf.max - conf.min) / max_depth;
+      auto const color = conf.min + static_cast<int>((depth - 1) * color_step);
       auto const color_a = color;
-      auto const color_b = max - color;
+      //auto const color_b = conf.max - color;
 
       auto const name = "n" + to_string(node.code, '-');
       auto node_line =
          fmt::format(tikz_node,
-	             right_color,
+	             conf.right_color,
 		     color_a,
-		     left_color,
+		     conf.left_color,
 		     name, x, y, node.name);
 
-      if (depth != 0) {
-	 std::vector<int> const parent_code =
-            {std::begin(node.code), std::prev(std::end(node.code))};
-	 auto const parent_name = "n" + to_string(parent_code, '-');
-	 y += y_step / 2;
-	 node_line += "\n";
-         node_line +=
-            fmt::format(tikz_arrow,
-			right_color,
-			color_b,
-			left_color,
-			name,
-			(depth - 1) * x_step, y, parent_name);
-      }
+      if (depth == 0)
+         return node_line;
+
+      std::vector<int> const parent_code =
+         {std::begin(node.code), std::prev(std::end(node.code))};
+
+      auto const parent_name = "n" + to_string(parent_code, '-');
+      y += conf.y_step / 2;
+      node_line += "\n";
+      node_line +=
+         fmt::format(tikz_arrow, name, (depth - 1) * conf.x_step, y, parent_name);
 
       return node_line;
    }
@@ -336,14 +330,21 @@ serialize(tree& t,
           tree::config::format of,
           char line_break,
           int const max_depth,
-          char field_sep)
+          char field_sep,
+	  tree::config::tikz const& conf)
 {
    tree_tsv_view view {t, max_depth};
 
    std::string ret;
    int line = 0;
    for (auto iter = std::begin(view); iter != std::end(view); ++iter) {
-      ret += node_dump(*iter, of, field_sep, iter.lasts(), line++, t.max_depth());
+      ret += node_dump(*iter,
+		       of,
+		       field_sep,
+		       iter.lasts(),
+		       line++,
+		       t.max_depth(),
+		       conf);
       ret += line_break;
    }
    return ret;
