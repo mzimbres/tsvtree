@@ -350,7 +350,7 @@ auto op1(options const& op)
       "\\beginpgfgraphicnamed{tree-f0}\n"
       "   \\begin{tikzpicture}[scale=1.0]\n"
       "%\\fill[color=brown!40] (-1,1) rectangle (15, -13);\n"
-      "\\shade[left color=brown,right color=brown!20] (-1,3) rectangle +(15,-15);\n"
+      "\\shade[left color=white!70!black,right color=white!90!black] (-1,3) rectangle +(15,-15);\n"
       "\\textnode at (3, 1) {\\huge\\bf Title};\n";
    }
 

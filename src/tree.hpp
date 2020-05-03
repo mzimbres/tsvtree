@@ -47,6 +47,7 @@ public:
 
 private:
    node head_;
+   int max_depth_ = 0;
 
    template <int>
    friend class tree_view;
@@ -61,6 +62,7 @@ public:
 
    auto empty() const noexcept { return std::empty(head_.children); }
    void load_leaf_counters();
+   auto max_depth() const noexcept {return max_depth_;};
 };
 
 // Iterators
