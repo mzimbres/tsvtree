@@ -339,10 +339,13 @@ auto op1(options const& op)
       "\\usetikzlibrary{arrows}\n"
       "\n"
       "\\colorlet{memC}{Apricot}\n"
+      "\\colorlet{arrowC}{black!70!white}\n"
+      "\\colorlet{docC}{RoyalBlue!50}\n"
+      "\\colorlet{textC}{black!80}\n"
       "\\tikzstyle{treenode}=[anchor=south west, rounded corners=2pt, node distance=0pt, fill=memC,shape=rectangle,minimum height=12pt, minimum width=0pt, inner sep=3pt]\n"
       "\\tikzstyle{textnode}=[anchor=south west, rounded corners=2pt, node distance=0pt, shape=rectangle,minimum height=0.0cm  ,minimum width=0.5cm  ,inner sep=2pt]\n"
       "\\tikzstyle{marrow}=[very thick, densely dotted,>=stealth,->, color=black]\n"
-      "\\tikzstyle{treearrow}=[rounded corners=8pt, very thick, >=stealth,<-, color=black]\n"
+      "\\tikzstyle{treearrow}=[rounded corners=8pt, very thick, >=stealth,<-, color=arrowC]\n"
       "\\def\\treenode{\\node[style=treenode]}\n"
       "\\def\\textnode{\\node[style=textnode]}\n"
       "\\def\\marrow{\\draw[style=marrow]}\n"
@@ -353,9 +356,9 @@ auto op1(options const& op)
       "\\begin{document}\n"
       "\\beginpgfgraphicnamed{tree-f0}\n"
       "   \\begin{tikzpicture}[scale=1.0]\n"
-      "%\\fill[color=brown!40] (-1,1) rectangle (15, -13);\n"
-      "\\shade[left color=BlueViolet!50,right color=BlueViolet!10] (-1,3) rectangle +(15,-15);\n"
-      "\\textnode at (3, 1) {\\huge\\bf Title};\n";
+      "\\fill[color=docC] (-1,4) rectangle (24, -33);\n"
+      "%\\shade[left color=BlueViolet!50,right color=BlueViolet!10] (-1,3) rectangle +(15,-15);\n"
+      "\\textnode at (4, 3) {\\huge\\bf tsvtree};\n";
    }
 
    std::cout << out << std::flush;
@@ -448,14 +451,15 @@ auto parse_options(int argc, char* argv[])
      "• comp: \tCompressed tree.\n"
      "• info: \tInfo of nodes at --depth.\n"
      "• tsv:  \tTSV format."
+     "• tikz:  \tTikZ format."
      //" json-tree: \tTree is output in json.\n" // Let undocumented.
      //" json-leaf-codes: \tCodes at --depth in json."
    )
-   ( "tikz-x-step,x", po::value<int>(&op.tikz_conf.x_step)->default_value(20), "Node horizontal distance in point units.")
-   ( "tikz-y-step,y", po::value<int>(&op.tikz_conf.y_step)->default_value(16), "Node vertical distance in point units.")
+   ( "tikz-x-step,x", po::value<int>(&op.tikz_conf.x_step)->default_value(30), "Node horizontal distance in point units.")
+   ( "tikz-y-step,y", po::value<int>(&op.tikz_conf.y_step)->default_value(20), "Node vertical distance in point units.")
    ( "tikz-color-min,a", po::value<int>(&op.tikz_conf.min)->default_value(30), "Right color minimum.")
    ( "tikz-color-max,g", po::value<int>(&op.tikz_conf.max)->default_value(60), "Right colot maximum.")
-   ( "tikz-right-color,i", po::value<std::string>(&op.tikz_conf.right_color)->default_value("Dandelion"), "Color of the right nodes.")
+   ( "tikz-right-color,i", po::value<std::string>(&op.tikz_conf.right_color)->default_value("BurntOrange"), "Color of the right nodes.")
    ( "tikz-left-color,j", po::value<std::string>(&op.tikz_conf.left_color)->default_value("White"), "Color of the node left nodes.")
    ;
 

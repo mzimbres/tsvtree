@@ -254,10 +254,10 @@ void tree::load_leaf_counters()
 }
 
 auto const* tikz_node =
-   "\\treenode[fill={}!{}!{}] ({}) at ({}pt, {}pt) {{\\color{{black}}{}}};";
+   "\\treenode[fill={}!{}!{}] ({}) at ({}pt, {}pt) {{\\color{{textC}}{}}};";
 
 auto const* tikz_arrow =
-   "\\treearrow[color=Gray] ({}.west) to ({}pt, {}pt) to ({}.south west);";
+   "\\treearrow[color=arrowC] ({}.west) to ({}pt, {}pt) to ({}.south west);";
 
 auto
 node_dump(tree::node const& node,

@@ -75,6 +75,13 @@ Shows node information at
 .br
 .B • tsv:
 Outputs tsv format.
+.br
+.B • tikz:
+Outputs tikz format.
+.sp 1
+The output of the tikz option above can be compiled with
+.sp 1
+  $ pdflatex --jobname=tree-f0 tree.tex.
 
 .TP
 .B \-k, \-\-tree
@@ -118,6 +125,30 @@ The output separator used in the output data. Defaults to tab.
 .TP
 .B \-c, \-\-check-leaf-min-depth=N
 Checks if the depth has at least the depth passed. Outputs OK or Fail.
+
+.TP
+.B \-x, \-\-tikz-x-step=N
+The node indentation in unit points (TikZ).
+
+.TP
+.B \-y, \-\-tikz-y-step=N
+The node vertical distance from each other in unit points (TikZ).
+
+.TP
+.B \-a, \-\-tikz-color-min=N
+The minimum amount of the left color. The right most nodes with have the color leftColor!N!rightColor (TikZ).
+
+.TP
+.B \-g, \-\-tikz-color-max=N
+The maximum amount of the left color. The left  most node with have the color leftColor!N!rightColor (TikZ).
+
+.TP
+.B \-i, \-\-tikz-right-color=N
+Right most node color (TikZ).
+
+.TP
+.B \-j, \-\-tikz-left-color=N
+Left most node color (TikZ).
 
 .SH EXAMPLES
 Some useful examples
