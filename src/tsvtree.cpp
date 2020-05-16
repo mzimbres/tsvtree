@@ -450,7 +450,7 @@ auto parse_options(int argc, char* argv[])
      "• tree: \tNode depth with indentation.\n"
      "• comp: \tCompressed tree.\n"
      "• info: \tInfo of nodes at --depth.\n"
-     "• tsv:  \tTSV format."
+     "• tsv:  \tTSV format.\n"
      "• tikz:  \tTikZ format."
      //" json-tree: \tTree is output in json.\n" // Let undocumented.
      //" json-leaf-codes: \tCodes at --depth in json."
