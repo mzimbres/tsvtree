@@ -5,10 +5,9 @@
 * Visualization of the TSV content in a tree-like format.
 * Compression and serialization.
 * Node information: The number leaf nodes are reachable from an entry and its coordinate in the tree.
+* Support for `TikZ` output format.
 
-It can be seen as a complement to text processing tools like `awk`, `cut`, `column`, `tac` etc. `tsvtree` is also caplable of outputing `tikz` format, for example
-
-![Example](examples/tree.png?raw=true)
+It can be seen as a complement to text processing tools like `awk`, `cut`, `column`, `tac` etc.
 
 ## Showing the tree
 
