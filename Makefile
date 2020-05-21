@@ -1,5 +1,5 @@
 pkg_name = tsvtree
-pkg_version = 1.0.3
+pkg_version = 1.0.4
 tarball = $(pkg_name)-$(pkg_version)
 prefix = /usr
 datarootdir = $(prefix)/share

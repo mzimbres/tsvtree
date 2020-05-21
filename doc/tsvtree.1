@@ -128,27 +128,27 @@ Checks if the depth has at least the depth passed. Outputs OK or Fail.
 
 .TP
 .B \-x, \-\-tikz-x-step=N
-The node indentation in unit points (TikZ).
+The node indentation in unit points.
 
 .TP
 .B \-y, \-\-tikz-y-step=N
-The node vertical distance from each other in unit points (TikZ).
-
-.TP
-.B \-a, \-\-tikz-color-min=N
-The minimum amount of the left color. The right most nodes with have the color leftColor!N!rightColor (TikZ).
-
-.TP
-.B \-g, \-\-tikz-color-max=N
-The maximum amount of the left color. The left  most node with have the color leftColor!N!rightColor (TikZ).
+The node vertical distance from each other in unit points.
 
 .TP
 .B \-i, \-\-tikz-right-color=N
-Right most node color (TikZ).
+Color of the right most node.
 
 .TP
 .B \-j, \-\-tikz-left-color=N
-Left most node color (TikZ).
+Color of the left most node.
+
+.TP
+.B \-a, \-\-tikz-color-min=N
+The minimum amount of the left color. The right most nodes will have the color leftColor!N!rightColor.
+
+.TP
+.B \-g, \-\-tikz-color-max=N
+The maximum amount of the left color. The left  most node will have the color leftColor!N!rightColor.
 
 .SH EXAMPLES
 Some useful examples
@@ -182,6 +182,14 @@ depth of the output tree to 2.
 .sp 1
 .br
   $ tsvtree --tree -o info file.tree --depth 2 | column -t -s $'\t'
+
+.sp 1
+• Illustrates the tikz option, 
+.sp 1
+.br
+  $ tsvtree --tree file.comp -o tikz > tree.tex
+  $ pdflatex --jobname=tree-f0 tree.tex.
+  $ pdftoppm tree-f0.pdf tree -png
 
 .sp 1
 • The authors of the last 50 commits on the Linux kernel sorted by date.
