@@ -1,0 +1,216 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" (C) Copyright 2020 Marcelo Zimbres <mzimbres@gmail.com>,
+.\"
+.\" See http://www.debian.org/doc/manuals/maint-guide/dother.en.html#manpage1
+.\"
+.\" 1. Use this as the template for the manpage for <commandname> after
+.\"    renaming this file to <commandname>.1 (if it is for section 1).
+.\"
+.\" 2. List the path to this file in debian/<packagename>.manpages to
+.\"    install this manpage to the target binary package.
+.\"
+.\" First parameter, TSVTREE, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH TSVTREE 1 "23 Apr 2020"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+tsvtree \- Displays and compresses TSV (Tab-Separated-Value) data.
+.SH SYNOPSIS
+.B tsvtree
+.RI [ options ] " file"
+.SH DESCRIPTION
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics,
+.\" respectively.
+\fBtsvtree\fP reads files in TSV, .tree and .comp format (see below) and
+provides the following functionality
+.sp 1
+• Displays the tree data structure underlying TSV data.
+.br
+• Compresses data by eliminating the redundancy of the TSV file.
+.sp 1
+The tree in the TSV data is assumed to have the depth increasing from
+left to right.  The program is also able to read and write files that
+contain field separators and line break other than tab and new line, which
+means it may be used in some CSV files as well.
+.br
+.SH OPTIONS
+.\"These programs follow the usual GNU command line syntax, with long options starting with two dashes (`-').
+The available options are
+
+.TP
+.B \-h, \-\-help
+Show summary of options.
+
+.TP
+.B \-v, \-\-version
+This program version.
+
+.TP
+.B \-o, \-\-output=FORMAT
+Can be one of the following
+.sp 1
+.B • tree:
+Node depth is represented with indentation.
+.br
+.B • comp:
+Node depth is represented with a number (compressed format).
+.br
+.B • info:
+Shows node information at
+.B --depth.
+.br
+.B • tsv:
+Outputs tsv format.
+.br
+.B • tikz:
+Outputs tikz format.
+.sp 1
+The output of the tikz option above can be compiled with
+.sp 1
+  $ pdflatex --jobname=tree-f0 tree.tex.
+
+.TP
+.B \-k, \-\-tree
+Required if the input format is in tree format. The program recognizes
+automatically if it is compressed or not. For non-compressed input
+i.e. where node depth is represented as indentation.
+
+.TP
+.B \-p, \-\-indent-with-tab
+Uses tabs to represent the node depth. This option is required if
+there is any intention in reading the output tree back with
+.B tsvtree.
+
+.TP
+.B \-d, \-\-depth=DEPTH
+Restricts the depth of the three in the output. At the moment this
+works only with option
+.B --tree.
+
+.TP
+.B \-f, \-\-file=PATH
+The file containing TSV or tree data (as output by this program). If
+not provided data is read from standard input.
+
+.TP
+.B \-e, \-\-input-separator=CHARACTER
+The field separator used in the input data. Default is tab.
+
+.TP
+.B \-r, \-\-input-line-break=CHARACTER
+The line break used in the input data. Defaults to the new line.
+
+.TP
+.B \-b, \-\-output-line-break=CHARACTER
+The line break used in the output. Defaults to new line.
+
+.TP
+.B \-s, \-\-output-separator=CHARACTER
+The output separator used in the output data. Defaults to tab.
+
+.TP
+.B \-c, \-\-check-leaf-min-depth=N
+Checks if the depth has at least the depth passed. Outputs OK or Fail.
+
+.TP
+.B \-x, \-\-tikz-x-step=N
+The node indentation in unit points.
+
+.TP
+.B \-y, \-\-tikz-y-step=N
+The node vertical distance from each other in unit points.
+
+.TP
+.B \-i, \-\-tikz-right-color=N
+Color of the right most node.
+
+.TP
+.B \-j, \-\-tikz-left-color=N
+Color of the left most node.
+
+.TP
+.B \-a, \-\-tikz-color-min=N
+The minimum amount of the left color. The right most nodes will have the color leftColor!N!rightColor.
+
+.TP
+.B \-g, \-\-tikz-color-max=N
+The maximum amount of the left color. The left  most node will have the color leftColor!N!rightColor.
+
+.SH EXAMPLES
+Some useful examples
+.sp 1
+• Converts a TSV file to .tree format.
+.sp 1
+.br
+  $ tsvtree file.tsv > file.tree
+
+.sp 1
+• Converts a TSV file to the compressed format (.comp).
+.sp 1
+.br
+  $ tsvtree file.tsv -o comp > file.comp
+
+.sp 1
+• Reads a file in tree format and writes it to output restricting the
+depth of the output tree to 2.
+.sp 1
+.br
+  $ tsvtree --tree -o tree file.tree --depth 2
+
+.sp 1
+• Converts file in tree format to TSV and formats the output with column.
+.sp 1
+.br
+  $ tsvtree --tree -o tsv file.tree | column -t -s $'\t'
+
+.sp 1
+• Reads a file in tree format and outputs information about the nodes at depth 2.
+.sp 1
+.br
+  $ tsvtree --tree -o info file.tree --depth 2 | column -t -s $'\t'
+
+.sp 1
+• Illustrates the tikz option, 
+.sp 1
+.br
+  $ tsvtree --tree file.comp -o tikz > tree.tex
+  $ pdflatex --jobname=tree-f0 tree.tex.
+  $ pdftoppm tree-f0.pdf tree -png
+
+.sp 1
+• The authors of the last 50 commits on the Linux kernel sorted by date.
+.sp 1
+.br
+  $ git log --oneline --pretty="%as%x09%an" -n 50 | tsvtree
+
+.sp 1
+• Last 40 commits on the Linux kernel excluding Linus Torvalds sorted by author.
+.sp 1
+.br
+  $ git log --oneline --pretty="%ci%x09%h%x09%s%x09%an" -n 40 | grep -v Torvalds | awk -F $'\t' '{print $4"\t"$1" "$2" "$3}' | tsvtree
+
+.SH AUTHOR
+Written by Marcelo Zimbres Silva <mzimbres@gmail.com>.
+
+.SH COPYRIGHT
+Copyright © 2020 Marcelo Zimbres Silva,
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+.SH SEE ALSO
+The source code is available at <https://github.com/mzimbres/tsvtree>

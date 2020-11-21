@@ -1,0 +1,27 @@
+tsvtree (1.0.5-1) unstable; urgency=medium
+
+  [ Marcelo Zimbres Silva ]
+  * New upstream version 1.0.5
+
+ -- Marcelo Zimbres Silva <mzimbres@gmail.com>  Thu, 21 May 2020 12:52:41 +0200
+
+tsvtree (1.0.3-1) unstable; urgency=medium
+
+  * Removes unneeded files
+  * First steps with the debian pipeline
+  * Adds content to the pipeline
+  * New upstream version 1.0.3
+
+ -- Marcelo Zimbres Silva <mzimbres@gmail.com>  Sat, 25 Apr 2020 13:03:02 +0200
+
+tsvtree (1.0.2-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Marcelo Zimbres Silva <mzimbres@gmail.com>  Sun, 19 Apr 2020 16:53:49 +0200
+
+tsvtree (1.0.1-1) stable; urgency=low
+
+  * First release, closes: bug#956526.
+
+ -- Marcelo Zimbres Silva <mzimbres@gmail.com>  Sun, 19 Apr 2020 12:31:00 +0200
