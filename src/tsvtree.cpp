@@ -30,7 +30,7 @@
 #include "tsv.hpp"
 #include "tree.hpp"
 #include "utils.hpp"
-#include "version.hpp"
+#include "config.h"
 
 namespace tsvtree {
 
@@ -423,7 +423,7 @@ auto parse_options(int argc, char* argv[])
 
    if (vm.count("version")) {
       op.exit = true;
-      std::cout << version << "\n";
+      std::cout << PACKAGE_VERSION << "\n";
       return op;
    }
 
