@@ -43,9 +43,6 @@ EXTRA_DIST += $(top_srcdir)/src/check.sh
 dist_man_MANS = $(top_srcdir)/doc/tsvtree.1
 
 CLEANFILES =
-#CLEANFILES += tsvtree
-#CLEANFILES += tsvsim
-#CLEANFILES += tsvsim.o
 CLEANFILES += Makefile.dep
 
 .PHONY: deb
@@ -59,7 +56,7 @@ deb: dist
 	tar -xvvzf $(distdir)-1.tar.gz; \
 	cd $(distdir)/debian; debuild --no-sign -j1
 
-#backup_emails = foo@bar.de
+backup_emails = foo@bar.de
 .PHONY: backup
 backup: $(tarball_dir).tar.gz
 	echo "Backup" | mutt -s "Backup" -a $< -- $(backup_emails)

@@ -1,3 +1,10 @@
+tsvtree (1.0.6-1) unstable; urgency=medium
+
+  [ Marcelo Zimbres Silva ]
+  * Ports the build system to autools.
+
+ -- Marcelo Zimbres Silva <mzimbres@gmail.com>  Sat, 03 Apr 2021 11:15:41 +0200
+
 tsvtree (1.0.5-1) unstable; urgency=medium
 
   [ Marcelo Zimbres Silva ]
