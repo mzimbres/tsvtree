@@ -39,6 +39,7 @@ EXTRA_DIST =
 EXTRA_DIST += $(top_srcdir)/examples/cities.tsv
 EXTRA_DIST += $(top_srcdir)/debian
 EXTRA_DIST += $(top_srcdir)/src/check.sh
+EXTRA_DIST += $(top_srcdir)/README.md
 
 dist_man_MANS = $(top_srcdir)/doc/tsvtree.1
 

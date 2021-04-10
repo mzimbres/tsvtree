@@ -254,7 +254,7 @@ void tree::load_leaf_counters()
 }
 
 auto const* tikz_node =
-   "\\treenode[fill={}!{}!{}] ({}) at ({}pt, {}pt) {{\\color{{textC}}{}}};";
+   "\\treenode[fill=depthC{}] ({}) at ({}pt, {}pt) {{\\color{{textC}}{}}};";
 
 auto const* tikz_arrow =
    "\\treearrow[color=arrowC] ({}.west) to ({}pt, {}pt) to ({}.south west);";
@@ -276,6 +276,22 @@ node_dump(tree::node const& node,
       return ret;
    }
 
+   if (of == tree::config::format::code) {
+      if (std::empty(node.code))
+        return std::string{};
+
+      auto const size = ssize(node.code);
+
+      std::string ret;
+      ret += std::to_string(node.code.front());
+      for (int i = 1; i < size - 1; ++i) {
+        ret += '\t';
+        ret += std::to_string(node.code[i]);
+      }
+
+      return ret;
+   }
+
    if (of == tree::config::format::counter) {
       std::string ret;
       ret += std::to_string(depth);
@@ -294,18 +310,8 @@ node_dump(tree::node const& node,
       auto const x = depth * conf.x_step;
       auto y = - line * conf.y_step;
 
-      auto const color_step = double(conf.max - conf.min) / max_depth;
-      auto const color = conf.min + static_cast<int>((depth - 1) * color_step);
-      auto const color_a = color;
-      //auto const color_b = conf.max - color;
-
       auto const name = "n" + to_string(node.code, '-');
-      auto node_line =
-         fmt::format(tikz_node,
-	             conf.right_color,
-		     color_a,
-		     conf.left_color,
-		     name, x, y, node.name);
+      auto node_line = fmt::format(tikz_node, depth, name, x, y, node.name);
 
       if (depth == 0)
          return node_line;

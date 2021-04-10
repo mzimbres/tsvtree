@@ -1,4 +1,4 @@
-/* Copyright (c) 2020 Marcelo Zimbres Silva (mzimbres at gmail dot com)
+/* Copyright (c) 2020 - 2021 Marcelo Zimbres Silva (mzimbres at gmail dot com)
  *
  * This file is part of tsvtree.
  * 
@@ -39,14 +39,10 @@ public:
    };
 
    struct config {
-     enum class format {tabs, counter, tsv, deco, tikz};
+     enum class format {tabs, counter, tsv, deco, tikz, code};
      struct tikz {
         int y_step = 16;
         int x_step = 20;
-        int min = 30;
-        int max = 60;
-        std::string right_color = "Orange";
-        std::string left_color = "white";
      };
 
      char field_sep = '\t';
@@ -88,7 +84,6 @@ private:
 
 public:
    tree_post_order_traversal(tree::node* root, int depth);
-   auto const& node_stack() const noexcept {return st_;}
    auto depth() const noexcept { return ssize(st_) - 1; }
    auto const& lasts() const noexcept { return lasts_;}
    line_type advance();
@@ -106,7 +101,6 @@ private:
 
 public:
    tree_tsv_traversal(tree::node* root, int depth);
-   auto const& node_stack() const noexcept { return st_; }
    auto depth() const noexcept { return ssize(st_) - 1; }
    auto const& lasts() const noexcept { return lasts_;}
    line_type next();
@@ -120,7 +114,6 @@ private:
 
 public:
    tree_traversal(tree::node* root, int depth) : t_{root, depth} { }
-   auto const& node_stack() const noexcept {return t_.node_stack();}
    auto advance() { return t_.advance();}
    auto depth() const noexcept { return t_.depth(); }
    auto lasts() const noexcept { return t_.lasts(); }

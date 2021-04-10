@@ -132,6 +132,7 @@ auto to_oformat(int i)
    if (i == 2) return tree::config::format::counter;
    if (i == 7) return tree::config::format::deco;
    if (i == 8) return tree::config::format::tikz;
+   if (i == 9) return tree::config::format::code;
 
    throw std::runtime_error("to_oformat: Invalid input.");
    return tree::config::format::tabs;
@@ -279,11 +280,21 @@ auto op1(options const& op)
       "\\usetikzlibrary{positioning}\n"
       "\\usetikzlibrary{arrows}\n"
       "\n"
-      "\\colorlet{memC}{Apricot}\n"
+      "\\colorlet{depthC0}{white}\n"
+      "\\colorlet{depthC1}{white}\n"
+      "\\colorlet{depthC2}{white}\n"
+      "\\colorlet{depthC3}{white}\n"
+      "\\colorlet{depthC4}{white}\n"
+      "\\colorlet{depthC5}{white}\n"
+      "\\colorlet{depthC6}{white}\n"
+      "\\colorlet{depthC7}{white}\n"
+      "\\colorlet{depthC8}{white}\n"
+      "\\colorlet{depthC9}{white}\n"
+      "\\colorlet{treenodeC}{Apricot}\n"
       "\\colorlet{arrowC}{black!70!white}\n"
       "\\colorlet{docC}{RoyalBlue!50}\n"
       "\\colorlet{textC}{black!80}\n"
-      "\\tikzstyle{treenode}=[anchor=south west, rounded corners=2pt, node distance=0pt, fill=memC,shape=rectangle,minimum height=12pt, minimum width=0pt, inner sep=3pt]\n"
+      "\\tikzstyle{treenode}=[anchor=south west, rounded corners=2pt, node distance=0pt, fill=treenodeC,shape=rectangle,minimum height=12pt, minimum width=0pt, inner sep=3pt]\n"
       "\\tikzstyle{textnode}=[anchor=south west, rounded corners=2pt, node distance=0pt, shape=rectangle,minimum height=0.0cm  ,minimum width=0.5cm  ,inner sep=2pt]\n"
       "\\tikzstyle{marrow}=[very thick, densely dotted,>=stealth,->, color=black]\n"
       "\\tikzstyle{treearrow}=[rounded corners=8pt, very thick, >=stealth,<-, color=arrowC]\n"
@@ -344,6 +355,7 @@ int impl(options const& op)
    if (op.oformat == 6) return op6(op);
    if (op.oformat == 7) return op1(op);
    if (op.oformat == 8) return op1(op);
+   if (op.oformat == 9) return op1(op);
 
    return 1;
 }
@@ -361,6 +373,7 @@ auto make_oformat(std::string const& s, bool deco)
    if (s == "info")             return 3;
    if (s == "tsv")              return 6;
    if (s == "tikz")             return 8;
+   if (s == "code")             return 9;
    return -1;
 }
 
@@ -388,14 +401,11 @@ auto parse_options(int argc, char* argv[])
      "• comp: \tCompressed tree.\n"
      "• info: \tInfo of nodes at --depth.\n"
      "• tsv:  \tTSV format.\n"
-     "• tikz:  \tTikZ format."
+     "• tikz:  \tTikZ format.\n"
+     "• code:  \tNode coordinate."
    )
    ( "tikz-x-step,x", po::value<int>(&op.tikz_conf.x_step)->default_value(30), "Node horizontal distance in point units.")
    ( "tikz-y-step,y", po::value<int>(&op.tikz_conf.y_step)->default_value(20), "Node vertical distance in point units.")
-   ( "tikz-color-min,a", po::value<int>(&op.tikz_conf.min)->default_value(30), "Right color minimum.")
-   ( "tikz-color-max,g", po::value<int>(&op.tikz_conf.max)->default_value(60), "Right colot maximum.")
-   ( "tikz-right-color,i", po::value<std::string>(&op.tikz_conf.right_color)->default_value("BurntOrange"), "Color of the right nodes.")
-   ( "tikz-left-color,j", po::value<std::string>(&op.tikz_conf.left_color)->default_value("White"), "Color of the node left nodes.")
    ;
 
    po::positional_options_description pos;
