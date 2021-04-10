@@ -281,9 +281,10 @@ node_dump(tree::node const& node,
           char field_sep,
           std::vector<bool> const& lasts,
 	  int line,
-	  tree::config::tikz const& conf)
+	  tree::config::tikz const& conf,
+          int at_depth)
 {
-   auto const depth = ssize(node.code);
+   auto const depth = ssize(node.code) - at_depth + 1;
 
    if (of == tree::config::format::tabs) {
       std::string ret(depth, '\t');
@@ -335,6 +336,7 @@ serialize(tree::node* p,
           tree::config::format of,
           char line_break,
           int max_depth,
+          int at_depth,
           char field_sep,
 	  tree::config::tikz const& conf)
 {
@@ -348,7 +350,8 @@ serialize(tree::node* p,
 		       field_sep,
 		       iter.lasts(),
 		       line++,
-		       conf);
+		       conf,
+                       at_depth);
       ret += line_break;
    }
    return ret;

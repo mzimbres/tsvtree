@@ -268,6 +268,7 @@ serialize(tree::node* p,
           tree::config::format of,
           char line_sep,
           int max_depth,
+          int at_depth,
           char field_sep,
 	  tree::config::tikz const& conf = {});
 

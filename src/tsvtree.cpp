@@ -201,12 +201,14 @@ auto to_tree_elem(options const& op)
 
    auto const cfg = op.make_tree_cfg(tree_str, op.tsv);
    tree t {tree_str, cfg};
+   auto const coord = op.at();
 
    auto const raw = 
-      serialize(t.at(op.at()),
+      serialize(t.at(coord),
                 tree::config::format::counter,
                 op.out_line_break,
                 std::numeric_limits<int>::max(),
+                ssize(coord),
                 op.out_field_sep,
 		op.tikz_conf);
 
@@ -276,6 +278,7 @@ auto op1(options const& op)
                 format,
                 op.out_line_break,
                 op.depth,
+                ssize(coord),
                 op.out_field_sep,
 		op.tikz_conf);
 
