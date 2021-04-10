@@ -165,18 +165,6 @@ std::string parse_tree(
    return ret;
 }
 
-auto split_line(std::string const& in, char sep)
-{
-   std::string line;
-   std::istringstream iss(in);
-   std::vector<std::string> ret;
-   while (std::getline(iss, line, sep))
-      if (!std::empty(line))
-         ret.push_back(line);
-
-   return ret;
-}
-
 std::vector<std::vector<std::string>>
 parse_tsv(std::string const& in, char sep)
 {

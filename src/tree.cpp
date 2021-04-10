@@ -222,6 +222,22 @@ tree::tree(std::string const& str, config const& cfg)
    max_depth_ = p.second;
 }
 
+tree::node* tree::at(std::vector<int> const& coord)
+{
+  if (std::empty(coord))
+     return nullptr;
+
+  auto* ret = &head_;
+  for (auto i = 0; i < ssize(coord); ++i) {
+     if (coord[i] >= ssize(ret->children))
+        return ret;
+
+     ret = ret->children[coord[i]];
+  }
+
+  return ret;
+}
+
 auto node_leaf_counter(tree::node const& node)
 {
    if (std::empty(node.children))
@@ -265,7 +281,6 @@ node_dump(tree::node const& node,
           char field_sep,
           std::vector<bool> const& lasts,
 	  int line,
-	  int max_depth,
 	  tree::config::tikz const& conf)
 {
    auto const depth = ssize(node.code);
@@ -273,22 +288,6 @@ node_dump(tree::node const& node,
    if (of == tree::config::format::tabs) {
       std::string ret(depth, '\t');
       ret += node.name;
-      return ret;
-   }
-
-   if (of == tree::config::format::code) {
-      if (std::empty(node.code))
-        return std::string{};
-
-      auto const size = ssize(node.code);
-
-      std::string ret;
-      ret += std::to_string(node.code.front());
-      for (int i = 1; i < size - 1; ++i) {
-        ret += '\t';
-        ret += std::to_string(node.code[i]);
-      }
-
       return ret;
    }
 
@@ -332,14 +331,14 @@ node_dump(tree::node const& node,
 }
 
 std::string
-serialize(tree& t,
+serialize(tree::node* p,
           tree::config::format of,
           char line_break,
-          int const max_depth,
+          int max_depth,
           char field_sep,
 	  tree::config::tikz const& conf)
 {
-   tree_tsv_view view {t, max_depth};
+   tree_tsv_view view {p, max_depth};
 
    std::string ret;
    int line = 0;
@@ -349,7 +348,6 @@ serialize(tree& t,
 		       field_sep,
 		       iter.lasts(),
 		       line++,
-		       t.max_depth(),
 		       conf);
       ret += line_break;
    }
@@ -357,9 +355,9 @@ serialize(tree& t,
 }
 
 std::vector<tree::node*>
-check_leaf_min_depths(tree& m, int min_depth)
+check_leaf_min_depths(tree::node* p, int min_depth)
 {
-   tree_level_view view {m, min_depth};
+   tree_level_view view {p, min_depth};
    for (auto iter = std::begin(view); iter != std::end(view); ++iter)
       if (iter.depth() < min_depth)
          return iter.line();
@@ -392,7 +390,7 @@ join(std::vector<tree::node*> const& line, char field_sep)
 
 tree::~tree()
 {
-   tree_post_order_view view {*this};
+   tree_post_order_view view {at({0})};
    for (auto iter = std::begin(view); iter != std::end(view); ++iter)
       delete iter.line().back();
 }

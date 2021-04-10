@@ -12,7 +12,7 @@
 .\" First parameter, TSVTREE, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH TSVTREE 1 "23 Apr 2020"
+.TH TSVTREE 1 "10 Apr 2021"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -135,20 +135,9 @@ The node indentation in unit points.
 The node vertical distance from each other in unit points.
 
 .TP
-.B \-i, \-\-tikz-right-color=N
-Color of the right most node.
-
-.TP
-.B \-j, \-\-tikz-left-color=N
-Color of the left most node.
-
-.TP
-.B \-a, \-\-tikz-color-min=N
-The minimum amount of the left color. The right most nodes will have the color leftColor!N!rightColor.
-
-.TP
-.B \-g, \-\-tikz-color-max=N
-The maximum amount of the left color. The left  most node will have the color leftColor!N!rightColor.
+.B \-a, \-\-at=0
+The coordinate in the tree where the analysis should start. For example
+0,2,1,4. The root node has coordinate 0.
 
 .SH EXAMPLES
 Some useful examples

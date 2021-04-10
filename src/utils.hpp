@@ -47,5 +47,7 @@ std::string to_string(std::vector<int> const& v, char delimiter = '.');
 
 std::string make_deco_indent(int depth, std::vector<bool> const& lasts);
 
+std::vector<std::string> split_line(std::string const& in, char sep);
+
 }
 

@@ -172,5 +172,17 @@ std::string make_deco_indent(int depth, std::vector<bool> const& lasts)
   return ret;
 }
 
+std::vector<std::string> split_line(std::string const& in, char sep)
+{
+   std::string line;
+   std::istringstream iss(in);
+   std::vector<std::string> ret;
+   while (std::getline(iss, line, sep))
+      if (!std::empty(line))
+         ret.push_back(line);
+
+   return ret;
 }
+
+} // tsvtree
 

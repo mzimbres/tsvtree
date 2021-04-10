@@ -39,7 +39,7 @@ public:
    };
 
    struct config {
-     enum class format {tabs, counter, tsv, deco, tikz, code};
+     enum class format {tabs, counter, tsv, deco, tikz};
      struct tikz {
         int y_step = 16;
         int x_step = 20;
@@ -66,9 +66,14 @@ public:
    tree(std::string const& str, config const& conf);
    ~tree();
 
-   auto empty() const noexcept { return std::empty(head_.children); }
+   bool empty() const noexcept { return std::empty(head_.children); }
+   bool max_depth() const noexcept {return max_depth_;};
    void load_leaf_counters();
-   auto max_depth() const noexcept {return max_depth_;};
+
+   // Returns a pointer to the node at the specified position in the tree where
+   // [0] is the root node.
+   node* at(std::vector<int> const& coord);
+
 };
 
 // Iterators
@@ -202,24 +207,17 @@ template <int N>
 class tree_view {
 private:
    int depth_;
-   tree::node* root_ = nullptr;
+   tree::node* node_ = nullptr;
 
 public:
    using iterator = tree_iterator<N>;
 
    tree_view(tree::node* root, int depth = std::numeric_limits<int>::max())
    : depth_ {depth}
-   , root_ {root}
+   , node_ {root}
    { }
 
-   tree_view(tree& m, int depth = std::numeric_limits<int>::max())
-   : depth_ {depth}
-   {
-      if (!std::empty(m.head_.children))
-         root_ = m.head_.children.front();
-   }
-
-   iterator begin() const {return iterator{root_, depth_};}
+   iterator begin() const {return iterator{node_, depth_};}
    iterator end() const {return iterator{};}
 };
 
@@ -230,7 +228,7 @@ using tree_tsv_view = tree_view<2>;
 // -------------------------------------------------------------------
 
 // Returns the line that does not have the minimun depth.
-line_type check_leaf_min_depths(tree& m, int min_depth);
+line_type check_leaf_min_depths(tree::node* p, int min_depth);
 
 std::string join(std::vector<tree::node*> const& line, char field_sep);
 
@@ -266,7 +264,7 @@ detect_iformat(std::string const& tree_str,
                bool tsv);
 
 std::string
-serialize(tree& t,
+serialize(tree::node* p,
           tree::config::format of,
           char line_sep,
           int max_depth,
