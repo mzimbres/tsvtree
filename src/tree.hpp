@@ -89,7 +89,7 @@ private:
 
 public:
    tree_post_order_traversal(tree::node* root, int depth);
-   auto depth() const noexcept { return ssize(st_) - 1; }
+   auto depth() const noexcept { return tsvtree::ssize(st_) - 1; }
    auto const& lasts() const noexcept { return lasts_;}
    line_type advance();
    line_type next_internal();
@@ -106,7 +106,7 @@ private:
 
 public:
    tree_tsv_traversal(tree::node* root, int depth);
-   auto depth() const noexcept { return ssize(st_) - 1; }
+   auto depth() const noexcept { return tsvtree::ssize(st_) - 1; }
    auto const& lasts() const noexcept { return lasts_;}
    line_type next();
    line_type advance();

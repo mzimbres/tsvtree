@@ -85,7 +85,7 @@ make_tree_line(std::string const& name,
 auto make_ranges(range const& r, int col)
 {
    auto f = [=](auto const& l)
-      { return ssize(l) > col; };
+      { return tsvtree::ssize(l) > col; };
 
    auto const first_ok = std::partition(r.begin, r.end, f);
 
@@ -156,7 +156,7 @@ std::string parse_tree(
       ret += line_break;
 
       auto const next = r.depth + 1;
-      if (next >= ssize(*r.begin))
+      if (next >= tsvtree::ssize(*r.begin))
          continue;
 
       st.push_back(std::move(make_ranges(r, next)));

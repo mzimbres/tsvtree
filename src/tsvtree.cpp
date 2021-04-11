@@ -208,7 +208,7 @@ auto to_tree_elem(options const& op)
                 tree::config::format::counter,
                 op.out_line_break,
                 std::numeric_limits<int>::max(),
-                ssize(coord),
+                tsvtree::ssize(coord),
                 op.out_field_sep,
 		op.tikz_conf);
 
@@ -278,7 +278,7 @@ auto op1(options const& op)
                 format,
                 op.out_line_break,
                 op.depth,
-                ssize(coord),
+                tsvtree::ssize(coord),
                 op.out_field_sep,
 		op.tikz_conf);
 

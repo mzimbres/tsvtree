@@ -154,11 +154,11 @@ public:
       if (depth == 0)
          throw std::runtime_error("Unknown file input format.");
 
-      if (ssize(codes_) <= depth)
+      if (tsvtree::ssize(codes_) <= depth)
          return; // Line is ignored.
 
       ++codes_.at(depth - 1);
-      for (auto i = depth; i < ssize(codes_); ++i)
+      for (auto i = depth; i < tsvtree::ssize(codes_); ++i)
          codes_[i] = -1;
 
       std::vector<int> const code { std::cbegin(codes_)
@@ -228,8 +228,8 @@ tree::node* tree::at(std::vector<int> const& coord)
      return nullptr;
 
   auto* ret = &head_;
-  for (auto i = 0; i < ssize(coord); ++i) {
-     if (coord[i] >= ssize(ret->children))
+  for (auto i = 0; i < tsvtree::ssize(coord); ++i) {
+     if (coord[i] >= tsvtree::ssize(ret->children))
         return ret;
 
      ret = ret->children[coord[i]];
@@ -284,7 +284,7 @@ node_dump(tree::node const& node,
 	  tree::config::tikz const& conf,
           int at_depth)
 {
-   auto const depth = ssize(node.code) - at_depth + 1;
+   auto const depth = tsvtree::ssize(node.code) - at_depth + 1;
 
    if (of == tree::config::format::tabs) {
       std::string ret(depth, '\t');
@@ -422,7 +422,7 @@ tree_post_order_traversal(tree::node* root, int depth)
 
 line_type tree_post_order_traversal::advance()
 {
-   while (!std::empty(st_.back().back()->children) && (ssize(st_) <= depth_))
+   while (!std::empty(st_.back().back()->children) && (tsvtree::ssize(st_) <= depth_))
       st_.push_back(st_.back().back()->children);
 
    auto tmp = parents(st_);
@@ -475,7 +475,7 @@ line_type tree_tsv_traversal::advance()
    auto const d = depth() == 0 ? 0 : depth() - 1;
    lasts_[d] = std::empty(st_.back());
 
-   if (!std::empty(line.back()->children) && ssize(st_) <= depth_)
+   if (!std::empty(line.back()->children) && tsvtree::ssize(st_) <= depth_)
       st_.push_back(line.back()->children);
 
    return line;

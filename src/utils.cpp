@@ -98,7 +98,7 @@ to_channel_codes(std::vector<std::vector<int>> const& o,
                  int depth,
                  int max)
 {
-   auto const max_channels = std::min(ssize(o), max);
+   auto const max_channels = std::min(tsvtree::ssize(o), max);
 
    auto f = [depth](auto const& e)
       { return make_code(e, depth); };
@@ -136,7 +136,7 @@ std::string to_string(std::vector<int> const& v, char delimiter)
       return to_str_raw(v.front(), 3, '0');
 
    std::string code;
-   for (auto i = 0; i != ssize(v) - 1; ++i)
+   for (auto i = 0; i != tsvtree::ssize(v) - 1; ++i)
       code += to_str_raw(v[i], 3, '0') + delimiter;
 
    code += to_str_raw(v.back(), 3, '0');
