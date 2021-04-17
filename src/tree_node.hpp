@@ -18,30 +18,18 @@
 
 #pragma once
 
+#include <deque>
 #include <vector>
-#include <cstdint>
-#include <iterator>
+#include <string>
 
 namespace tsvtree
 {
 
-template <class C>
-auto ssize(C const& c)
-   { return static_cast<int>(std::size(c)); }
+struct tree_node {
+   std::string name;
+   std::vector<int> code;
+   int leaf_counter = 0;
+   std::deque<tree_node*> children;
+};
 
-using code_type = std::uint64_t;
-code_type make_code(std::vector<int> const& c, int depth);
-
-std::vector<code_type>
-to_channel_codes(std::vector<std::vector<int>> const& o,
-                 int depth,
-                 int max);
-
-std::string to_string(std::vector<int> const& v, char delimiter = ':');
-
-std::string make_deco_indent(int depth, std::vector<bool> const& lasts);
-
-std::vector<std::string> split_line(std::string const& in, char sep);
-
-}
-
+} // tsvtree

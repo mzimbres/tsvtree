@@ -12,6 +12,13 @@ noinst_PROGRAMS = tsvsim
 bin_PROGRAMS = tsvtree
 
 tsvtree_SOURCES =
+tsvtree_SOURCES += $(top_srcdir)/src/tree_node.hpp
+tsvtree_SOURCES += $(top_srcdir)/src/tree_view.hpp
+tsvtree_SOURCES += $(top_srcdir)/src/tree_view.cpp
+tsvtree_SOURCES += $(top_srcdir)/src/tree_parser.hpp
+tsvtree_SOURCES += $(top_srcdir)/src/tree_parser.cpp
+tsvtree_SOURCES += $(top_srcdir)/src/tree_utils.hpp
+tsvtree_SOURCES += $(top_srcdir)/src/tree_utils.cpp
 tsvtree_SOURCES += $(top_srcdir)/src/tree.cpp
 tsvtree_SOURCES += $(top_srcdir)/src/tree.hpp
 tsvtree_SOURCES += $(top_srcdir)/src/tsv.cpp

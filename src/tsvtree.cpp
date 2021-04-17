@@ -1,4 +1,4 @@
-/* Copyright (c) 2020 Marcelo Zimbres Silva (mzimbres at gmail dot com)
+/* Copyright (c) 2020 - 2021 Marcelo Zimbres Silva (mzimbres at gmail dot com)
  *
  * This file is part of tsvtree.
  * 
@@ -34,19 +34,8 @@
 
 namespace tsvtree {
 
-namespace print
-{
-
-struct node_info {
-   char sep = '\t';
-   void operator()(tree::node const& node) const
-   { std::cout << node.name << sep << to_string(node.code) << sep << "\n"; }
-};
-
-}
-
 struct options {
-   int oformat;
+   oconfig oc;
    int depth;
 
    char in_field_sep = '\t';
@@ -58,16 +47,13 @@ struct options {
 
    std::string file;
    std::string at_coord;
-   bool check_leaf_min_depth = false;
    bool exit = false;
    bool tsv = true;
    bool decorate_tree = true;
 
-   tree::config::tikz tikz_conf;
-
    auto at() const
    {
-     auto const coord = split_line(at_coord, ',');
+     auto const coord = split_line(at_coord, ':');
      auto f = [](auto const& in)
        { return std::stoi(in); };
 
@@ -86,10 +72,11 @@ struct options {
                         in_field_sep,
                         tsv_arg);
 
-      return tree::config
+      return oconfig
       { in_field_sep
       , in_line_break
-      , fmt};
+      , fmt
+      , {}};
    }
 
    auto make_tsv_cfg() const
@@ -104,11 +91,12 @@ struct options {
 };
 
 auto
-to_channels(tree_elem const& elem,
-            tree::config const& cfg)
+to_channels(std::string const& data,
+            oconfig const& cfg,
+            int depth)
 {
-   tree t {elem.data, cfg};
-   tree_level_view view {t.at({0}), elem.depth};
+   tree t {data, cfg};
+   auto view = t.level_view({0}, depth);
 
    auto f = [](auto const& o)
       { return o.code; };
@@ -133,95 +121,12 @@ auto readfile(std::string const& file)
    return std::string {iter_type {ifs}, {}};
 }
 
-auto to_oformat(int i)
+int op_tsv(options const& op)
 {
-   if (i == 1) return tree::config::format::tabs;
-   if (i == 2) return tree::config::format::counter;
-   if (i == 7) return tree::config::format::deco;
-   if (i == 8) return tree::config::format::tikz;
-
-   throw std::runtime_error("to_oformat: Invalid input.");
-   return tree::config::format::tabs;
-}
-
-struct tree_info {
-   std::string file;
-   int depth = 0;
-   int version = 0;
-};
-
-/*  Converts the input in the form
- *
- *    file:depth:version
- *
- *  to the struct tree_info.
- */
-tree_info decode_tree_info(std::string const& data, char sep = ':')
-{
-   if (std::count(std::cbegin(data), std::cend(data), sep) == 0)
-      return {data, std::numeric_limits<int>::max(), 0};
-
-   if (std::size(data) < 5)
-      throw std::runtime_error("Invalid name length (n < 5).");
-
-   if (data.front() == sep)
-      throw std::runtime_error("Invalid tree info.");
-
-   if (data.back() == sep)
-      throw std::runtime_error("Invalid tree info.");
-
-   auto const p1 = data.find_first_of(sep);
-
-   if (p1 == std::string::npos)
-      return {data, std::numeric_limits<int>::max(), 0};
-
-   auto const p2 = data.find_first_of(sep, p1 + 1);
-
-   if (p2 == p1 + 1)
-      throw std::runtime_error("Invalid tree info.");
-
-   if (p2 == std::string::npos)
-      return { data.substr(0, p1)
-             , std::stoi(data.substr(p1 + 1))
-             , 0};
-   
-   return { data.substr(0, p1)
-          , std::stoi(data.substr(p1 + 1))
-          , std::stoi(data.substr(p2 + 1))};
-}
-
-auto to_tree_elem(options const& op)
-{
-   using iter_type = std::istreambuf_iterator<char>;
-
-   auto const info = decode_tree_info(op.file);
-
-   std::ifstream ifs(info.file);
-   std::string tree_str {iter_type {ifs}, {}};
-
-   auto const cfg = op.make_tree_cfg(tree_str, op.tsv);
-   tree t {tree_str, cfg};
-   auto const coord = op.at();
-
-   auto const raw = 
-      serialize(t.at(coord),
-                tree::config::format::counter,
-                op.out_line_break,
-                std::numeric_limits<int>::max(),
-                tsvtree::ssize(coord),
-                op.out_field_sep,
-		op.tikz_conf);
-
-   return tree_elem {raw, info.depth, info.version};
-}
-
-auto op6(options const& op)
-{
-   auto const info = decode_tree_info(op.file);
-   auto const str = readfile(info.file);
+   auto const str = readfile(op.file);
    tree t {str, op.make_tree_cfg(str, op.tsv)};
 
-   tree_level_view view {t.at(op.at()), op.depth};
+   auto view = t.level_view(op.at(), op.depth);
    for (auto iter = std::begin(view); iter != std::end(view); ++iter) {
       auto const& line = iter.line();
       auto const ret = join(line, op.out_field_sep);
@@ -232,10 +137,9 @@ auto op6(options const& op)
    return 0;
 }
 
-auto op3(options const& op)
+auto op_info(options const& op)
 {
-   auto const info = decode_tree_info(op.file);
-   auto content = readfile(info.file);
+   auto content = readfile(op.file);
 
    if (op.tsv) {
       auto const cfg = op.make_tsv_cfg();
@@ -246,19 +150,27 @@ auto op3(options const& op)
    tree t {content, cfg};
    t.load_leaf_counters();
 
-   tree_level_view view {t.at(op.at()), op.depth};
+   auto view = t.tsv_view(op.at(), op.depth);
 
-   std::for_each(std::cbegin(view),
-                 std::cend(view),
-                 print::node_info{op.out_field_sep});
+   auto f =  [&](auto const& node)
+   {
+     std::cout
+        << node.name
+        << op.out_field_sep
+        << to_string(node.code)
+        << op.out_field_sep
+        << node.leaf_counter
+        << "\n";
+   };
+
+   std::for_each(std::cbegin(view), std::cend(view), f);
 
    return 0;
 }
 
 auto op1(options const& op)
 {
-   auto const info = decode_tree_info(op.file);
-   auto const content = readfile(info.file);
+   auto const content = readfile(op.file);
 
    if (op.tsv) {
       auto const cfg = op.make_tsv_cfg();
@@ -269,20 +181,19 @@ auto op1(options const& op)
 
    auto const cfg = op.make_tree_cfg(content, op.tsv);
    tree t {content, cfg};
-   auto const format = to_oformat(op.oformat);
    auto const coord = op.at();
    auto* node = t.at(coord);
 
    auto const out =
       serialize(node,
-                format,
+                op.oc.fmt,
                 op.out_line_break,
                 op.depth,
                 tsvtree::ssize(coord),
                 op.out_field_sep,
-		op.tikz_conf);
+		op.oc.tikz_conf);
 
-   if (format == tree::config::format::tikz) {
+   if (op.oc.fmt == oconfig::format::tikz) {
       std::cout <<
       "\\documentclass[11pt]{article}\n"
       "\\usepackage{graphics}\n"
@@ -326,7 +237,7 @@ auto op1(options const& op)
 
    std::cout << out << std::flush;
 
-   if (format == tree::config::format::tikz) {
+   if (op.oc.fmt == oconfig::format::tikz) {
       std::cout <<
       "\\end{tikzpicture}\n"
       "\\endpgfgraphicnamed\n"
@@ -336,16 +247,15 @@ auto op1(options const& op)
    return 0;
 }
 
-int check_leaf_min_depth_op(options const& op)
+int check_min_depth_op(options const& op)
 {
-   auto const info = decode_tree_info(op.file);
-   auto const str = readfile(info.file);
+   auto const str = readfile(op.file);
    auto const cfg = op.make_tree_cfg(str, op.tsv);
 
    tree t {str, cfg};
+   auto view = t.level_view(op.at());
+   auto const out = check_min_depth(view, op.depth);
 
-   auto const line = check_leaf_min_depths(t.at(op.at()), op.depth);
-   auto const out = join(line, op.out_field_sep);
    if (std::empty(out)) {
       std::cout << "Ok" << std::endl;
       return 0;
@@ -357,17 +267,19 @@ int check_leaf_min_depth_op(options const& op)
 
 int impl(options const& op)
 {
-   if (op.check_leaf_min_depth)
-      return check_leaf_min_depth_op(op); 
-
-   if (op.oformat == 1) return op1(op);
-   if (op.oformat == 2) return op1(op);
-   if (op.oformat == 3) return op3(op);
-   if (op.oformat == 6) return op6(op);
-   if (op.oformat == 7) return op1(op);
-   if (op.oformat == 8) return op1(op);
-
-   return 1;
+   switch (op.oc.fmt) {
+     case oconfig::format::check_min_depth: return check_min_depth_op(op); 
+     case oconfig::format::tree: return op1(op);
+     case oconfig::format::comp: return op1(op);
+     case oconfig::format::info: return op_info(op);
+     case oconfig::format::tsv: return op_tsv(op);
+     case oconfig::format::tree_deco: return op1(op);
+     case oconfig::format::tikz: return op1(op);
+     default: {
+       throw std::runtime_error("Invalid input format.");
+       return 1;
+     }
+   }
 }
 
 }
@@ -375,21 +287,22 @@ int impl(options const& op)
 namespace po = boost::program_options;
 using namespace tsvtree;
 
-auto make_oformat(std::string const& s, bool deco)
+auto make_oformat(std::string const& s, bool deco, bool check_min_depth)
 {
-   if (s == "tree" && deco)     return 7;
-   if (s == "tree")             return 1;
-   if (s == "comp")             return 2;
-   if (s == "info")             return 3;
-   if (s == "tsv")              return 6;
-   if (s == "tikz")             return 8;
-   return -1;
+   if (check_min_depth) return oconfig::format::check_min_depth;
+   if (s == "tree" && deco) return oconfig::format::tree_deco;
+   if (s == "tree") return oconfig::format::tree;
+   if (s == "comp") return oconfig::format::comp;
+   if (s == "info") return oconfig::format::info;
+   if (s == "tsv") return oconfig::format::tsv;
+   if (s == "tikz") return oconfig::format::tikz;
+   return oconfig::format::invalid;
 }
 
 auto parse_options(int argc, char* argv[])
 {
    options op;
-   std::string oformat = "tree";
+   std::string of = "tree";
    po::options_description desc("Options");
    desc.add_options()
    ( "help,h", "This help message.")
@@ -403,9 +316,9 @@ auto parse_options(int argc, char* argv[])
    ( "input-line-break,r", po::value<char>(&op.in_line_break), "Line break in the input file.")
    ( "output-line-break,b", po::value<char>(&op.out_line_break), "Line break character used in the output.")
    ( "output-separator,s", po::value<char>(&op.out_field_sep), "Output field separator.")
-   ( "check-leaf-min-depth,c","Checks whether all leaf nodes have at least the depth specified in --depth.")
+   ( "check-min-depth,c","Checks whether all leaf nodes have at least the depth specified in --depth.")
    ( "output,o"
-   , po::value<std::string>(&oformat)->default_value("tree")
+   , po::value<std::string>(&of)->default_value("tree")
    , "Format used in the output file. Available options:\n"
      "• tree: \tNode depth with indentation.\n"
      "• comp: \tCompressed tree.\n"
@@ -413,8 +326,8 @@ auto parse_options(int argc, char* argv[])
      "• tsv:  \tTSV format.\n"
      "• tikz:  \tTikZ format."
    )
-   ( "tikz-x-step,x", po::value<int>(&op.tikz_conf.x_step)->default_value(30), "Node horizontal distance in point units.")
-   ( "tikz-y-step,y", po::value<int>(&op.tikz_conf.y_step)->default_value(20), "Node vertical distance in point units.")
+   ( "tikz-x-step,x", po::value<int>(&op.oc.tikz_conf.x_step)->default_value(30), "Node horizontal distance in point units.")
+   ( "tikz-y-step,y", po::value<int>(&op.oc.tikz_conf.y_step)->default_value(20), "Node vertical distance in point units.")
    ;
 
    po::positional_options_description pos;
@@ -426,9 +339,10 @@ auto parse_options(int argc, char* argv[])
    po::notify(vm);    
 
    op.decorate_tree = vm.count("indent-with-tab") == 0;
-   op.oformat = make_oformat(oformat, op.decorate_tree);
+   auto const check_min_depth = vm.count("check-min-depth") > 0;
+   op.oc.fmt = make_oformat(of, op.decorate_tree, check_min_depth);
 
-   if (op.oformat == -1) {
+   if (op.oc.fmt == oconfig::format::invalid) {
       std::cerr << "Invalid output option." << std::endl;
       op.exit = true;
       return op;
@@ -446,12 +360,11 @@ auto parse_options(int argc, char* argv[])
       return op;
    }
 
-   op.check_leaf_min_depth = vm.count("check-leaf-min-depth") > 1;
    op.tsv = vm.count("tree") == 0;
 
    if (op.tsv) {
-      if (op.oformat == 2) op.out_indent = -1;
-      if (op.oformat == 3) op.out_indent = -1;
+      if (op.oc.fmt == oconfig::format::comp) op.out_indent = -1;
+      if (op.oc.fmt == oconfig::format::info) op.out_indent = -1;
    }
 
    return op;

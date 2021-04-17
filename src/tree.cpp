@@ -1,4 +1,4 @@
-/* Copyright (c) 2020 Marcelo Zimbres Silva (mzimbres at gmail dot com)
+/* Copyright (c) 2020 - 2021 Marcelo Zimbres Silva (mzimbres at gmail dot com)
  *
  * This file is part of tsvtree.
  *
@@ -18,203 +18,19 @@
 
 #include "tree.hpp"
 
-#include <ios>
-#include <stack>
-#include <limits>
-#include <cctype>
-#include <vector>
-#include <numeric>
 #include <cassert>
-#include <sstream>
-#include <iostream>
 #include <iterator>
+#include <numeric>
 #include <algorithm>
 #include <exception>
 
+#include "tree_parser.hpp"
 #include "utils.hpp"
-#include "tsv.hpp"
-
-#include <fmt/format.h>
 
 namespace tsvtree
 {
 
-auto
-remove_depth(std::string& line,
-             tree::config::format ifmt,
-             char field_sep)
-{
-   if (std::empty(line))
-      return -1;
-
-   if (ifmt == tree::config::format::tabs) {
-      auto const i = line.find_first_not_of('\t');
-      if (i == std::string::npos)
-         throw std::runtime_error("Invalid line.");
-
-      line.erase(0, i);
-      return static_cast<int>(i);
-   }
-
-   if (ifmt == tree::config::format::counter) {
-      if (std::empty(line))
-         return -1;
-
-      auto const p1 = line.find_first_of(field_sep);
-      if (p1 == std::string::npos)
-         throw std::runtime_error("No field separator found in line.");
-
-      auto const p2 = line.find_first_of(field_sep, p1 + 1);
-      if (p2 == std::string::npos) {
-         auto const digit = line.substr(0, p1);
-         line.erase(0, p1 + 1);
-         // Now the line contains only the middle field.
-         return std::stoi(digit);
-      }
-
-      // The middle data cannot be empty.
-      if (p2 == p1 + 1)
-         throw std::runtime_error("Invalid line.");
-
-      auto const digit = line.substr(0, p1);
-      line.erase(0, p1 + 1);
-      line.erase(p2);
-
-      // Now the line contains only the middle field.
-      return std::stoi(digit);
-   }
-
-   return -1;
-}
-
-auto first_line(std::string const& tree_str, char line_break)
-{
-   std::stringstream ss(tree_str);
-   std::string line;
-   while (std::getline(ss, line, line_break))
-      if (!std::empty(line))
-         return line;
-
-   return std::string {};
-}
-
-tree::config::format
-detect_iformat(std::string const& tree_str,
-               char line_break,
-               char field_sep,
-               bool tsv)
-{
-   if (tsv)
-      return tree::config::format::tsv;
-
-   auto const line = first_line(tree_str, line_break);
-
-   auto const n =
-      std::count(std::cbegin(line),
-                 std::cend(line),
-                 field_sep);
-   if (n > 0)
-      return tree::config::format::counter;
-
-   return tree::config::format::tabs;
-}
-
-class tree_parser {
-private:
-   std::vector<int> codes_;
-   std::stack<tree::node*> stack_;
-   int last_depth_ = 0;
-   tree::node head_;
-   int max_depth_ = 0;
-
-public:
-   tree_parser(int max_depth) : codes_(max_depth, -1) { }
-   auto head() const noexcept {return head_;};
-   auto max_depth() const noexcept {return max_depth_;};
-   void add_line(std::string line, tree::config const& cfg)
-   {
-      auto const depth =
-         remove_depth(line,
-                      cfg.fmt,
-                      cfg.field_sep);
-
-      if (depth == -1)
-         return;
-
-      if (depth > max_depth_)
-         max_depth_ = depth;
-
-      if (std::empty(head_.children)) {
-         auto* p = new tree::node {line, {}};
-         head_.children.push_front(p);
-         stack_.push(p);
-         return;
-      }
-
-      if (depth == 0)
-         throw std::runtime_error("Unknown file input format.");
-
-      if (tsvtree::ssize(codes_) <= depth)
-         return; // Line is ignored.
-
-      ++codes_.at(depth - 1);
-      for (auto i = depth; i < tsvtree::ssize(codes_); ++i)
-         codes_[i] = -1;
-
-      std::vector<int> const code { std::cbegin(codes_)
-                                  , std::cbegin(codes_) + depth};
-      if (depth > last_depth_) {
-         if (last_depth_ + 1 != depth)
-            throw std::runtime_error("Forward jump not allowed.");
-
-         // We found the child of the last node pushed on the stack.
-         auto* p = new tree::node {line, code};
-         stack_.top()->children.push_front(p);
-         stack_.push(p);
-         ++last_depth_;
-      } else if (depth < last_depth_) {
-         // Now we have to pop that number of nodes from the stack
-         // until we get to the node that is should be the parent of
-         // the current line.
-         auto const delta_depth = last_depth_ - depth;
-         for (auto i = 0; i < delta_depth; ++i)
-            stack_.pop();
-
-         stack_.pop();
-
-         // Now we can add the new node.
-         auto* p = new tree::node {line, code};
-         stack_.top()->children.push_front(p);
-         stack_.push(p);
-
-         last_depth_ = depth;
-      } else {
-         stack_.pop();
-         auto* p = new tree::node {line, code};
-         stack_.top()->children.push_front(p);
-         stack_.push(p);
-         // Last depth stays equal.
-      }
-   }
-};
-
-// Parses the three contained in tree_str and puts its root node in
-// root.children.
-auto
-parse_tree(std::string const& tree_str,
-           tree::config const& cfg)
-{
-   // TODO: Make it exception safe.
-   std::stringstream ss(tree_str);
-   std::string line;
-   tree_parser p {1000};
-   while (std::getline(ss, line, cfg.line_break))
-      p.add_line(std::move(line), cfg);
-
-   return std::make_pair(p.head(), p.max_depth());
-}
-
-tree::tree(std::string const& str, config const& cfg)
+tree::tree(std::string const& str, oconfig const& cfg)
 {
    // TODO: Catch exceptions and release already acquired memory.
    auto const p = parse_tree(str, cfg);
@@ -222,7 +38,7 @@ tree::tree(std::string const& str, config const& cfg)
    max_depth_ = p.second;
 }
 
-tree::node* tree::at(std::vector<int> const& coord)
+tree_node* tree::at(std::vector<int> const& coord)
 {
   if (std::empty(coord))
      return nullptr;
@@ -238,7 +54,7 @@ tree::node* tree::at(std::vector<int> const& coord)
   return ret;
 }
 
-auto node_leaf_counter(tree::node const& node)
+auto node_leaf_counter(tree_node const& node)
 {
    if (std::empty(node.children))
       return 0;
@@ -265,234 +81,16 @@ void tree::load_leaf_counters()
    auto f = [](auto& node)
       { node.leaf_counter = node_leaf_counter(node); };
 
-   tree_post_order_view view {head_.children.front()};
+   tree_postorder_view view {head_.children.front()};
    std::for_each(std::cbegin(view), std::cend(view), f);
-}
-
-auto const* tikz_node =
-   "\\treenode[fill=depthC{}] ({}) at ({}pt, {}pt) {{\\color{{textC}}{}}};";
-
-auto const* tikz_arrow =
-   "\\treearrow[color=arrowC] ({}.west) to ({}pt, {}pt) to ({}.south west);";
-
-auto
-node_dump(tree::node const& node,
-          tree::config::format of,
-          char field_sep,
-          std::vector<bool> const& lasts,
-	  int line,
-	  tree::config::tikz const& conf,
-          int at_depth)
-{
-   auto const depth = tsvtree::ssize(node.code) - at_depth + 1;
-
-   if (of == tree::config::format::tabs) {
-      std::string ret(depth, '\t');
-      ret += node.name;
-      return ret;
-   }
-
-   if (of == tree::config::format::counter) {
-      std::string ret;
-      ret += std::to_string(depth);
-      ret += field_sep;
-      ret += node.name;
-      return ret;
-   }
-
-   if (of == tree::config::format::deco) {
-      auto ret = make_deco_indent(depth, lasts);
-      ret += node.name;
-      return ret;
-   }
-
-   if (of == tree::config::format::tikz) {
-      auto const x = depth * conf.x_step;
-      auto y = - line * conf.y_step;
-
-      auto const name = "n" + to_string(node.code, '-');
-      auto node_line = fmt::format(tikz_node, depth, name, x, y, node.name);
-
-      if (depth == 0)
-         return node_line;
-
-      std::vector<int> const parent_code =
-         {std::begin(node.code), std::prev(std::end(node.code))};
-
-      auto const parent_name = "n" + to_string(parent_code, '-');
-      y += conf.y_step / 2;
-      node_line += "\n";
-      node_line +=
-         fmt::format(tikz_arrow, name, (depth - 1) * conf.x_step, y, parent_name);
-
-      return node_line;
-   }
-
-   return to_string(node.code);
-}
-
-std::string
-serialize(tree::node* p,
-          tree::config::format of,
-          char line_break,
-          int max_depth,
-          int at_depth,
-          char field_sep,
-	  tree::config::tikz const& conf)
-{
-   tree_tsv_view view {p, max_depth};
-
-   std::string ret;
-   int line = 0;
-   for (auto iter = std::begin(view); iter != std::end(view); ++iter) {
-      ret += node_dump(*iter,
-		       of,
-		       field_sep,
-		       iter.lasts(),
-		       line++,
-		       conf,
-                       at_depth);
-      ret += line_break;
-   }
-   return ret;
-}
-
-std::vector<tree::node*>
-check_leaf_min_depths(tree::node* p, int min_depth)
-{
-   tree_level_view view {p, min_depth};
-   for (auto iter = std::begin(view); iter != std::end(view); ++iter)
-      if (iter.depth() < min_depth)
-         return iter.line();
-
-   return {};
-}
-
-std::string
-join(std::vector<tree::node*> const& line, char field_sep)
-{
-   if (std::empty(line))
-      return std::string {};
-
-   auto acc = [=](auto init, auto const* p)
-   {
-      init += p->name;
-      init += field_sep;
-      return init;
-   };
-
-   auto ret =
-      std::accumulate(std::cbegin(line),
-                      std::prev(std::cend(line)),
-                      std::string {},
-                      acc);
-
-   ret += line.back()->name;
-   return ret;
 }
 
 tree::~tree()
 {
-   tree_post_order_view view {at({0})};
+   tree_postorder_view view {at({0})};
    for (auto iter = std::begin(view); iter != std::end(view); ++iter)
       delete iter.line().back();
 }
 
-// Returns a vector containing all parents of a leaf node. Represents
-// a line in the tsv file.
-line_type parents(std::deque<std::deque<tree::node*>> const& st)
-{
-   line_type r;
-   for (auto iter = std::cbegin(st); iter != std::cend(st); ++iter)
-      if (!std::empty(*iter))
-         r.push_back(iter->back());
-
-   return r;
-}
-
-//-------------------------------------------------------------------
-tree_post_order_traversal::
-tree_post_order_traversal(tree::node* root, int depth)
-: depth_(depth)
-, lasts_(depth > 1000 ? 1000 : depth)
-{
-   if (root)
-      st_.push_back({root});
-}
-
-line_type tree_post_order_traversal::advance()
-{
-   while (!std::empty(st_.back().back()->children) && (tsvtree::ssize(st_) <= depth_))
-      st_.push_back(st_.back().back()->children);
-
-   auto tmp = parents(st_);
-   st_.back().pop_back();
-   return tmp;
-}
-
-line_type tree_post_order_traversal::next_internal()
-{
-   st_.pop_back();
-   if (std::empty(st_))
-      return line_type {};
-
-   auto tmp = parents(st_);
-   st_.back().pop_back();
-   return tmp;
-}
-
-line_type tree_post_order_traversal::next_leaf_node()
-{
-   while (std::empty(st_.back()))
-      if (std::empty(next_internal()))
-         return line_type {};
-
-   return advance();
-}
-
-line_type tree_post_order_traversal::next_node()
-{
-   if (std::empty(st_.back()))
-      return next_internal();
-
-   return advance();
-}
-
-//-------------------------------------------------------------------
-tree_tsv_traversal::tree_tsv_traversal(tree::node* root, int depth)
-: depth_(depth)
-, lasts_(depth > 1000 ? 1000 : depth)
-{
-   if (root)
-      st_.push_back({root});
-}
-
-line_type tree_tsv_traversal::advance()
-{
-   auto line = parents(st_);
-   st_.back().pop_back();
-
-   auto const d = depth() == 0 ? 0 : depth() - 1;
-   lasts_[d] = std::empty(st_.back());
-
-   if (!std::empty(line.back()->children) && tsvtree::ssize(st_) <= depth_)
-      st_.push_back(line.back()->children);
-
-   return line;
-}
-
-line_type tree_tsv_traversal::next()
-{
-   while (std::empty(st_.back())) {
-      st_.pop_back();
-      if (std::empty(st_))
-         return line_type {};
-   }
-
-   return advance();
-}
-
-//-------------------------------------------------------------------
-
-}
+} // tsvtree
 

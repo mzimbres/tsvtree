@@ -113,33 +113,19 @@ to_channel_codes(std::vector<std::vector<int>> const& o,
    return ret;
 }
 
-std::string to_str_raw(int i, int width, char fill)
-{
-   std::ostringstream oss;
-   oss.fill(fill);
-   oss.width(width);
-   oss << std::hex << i;
-   return oss.str();
-}
-
-std::string to_str(int i)
-{
-   return to_str_raw(i, 10, '0');
-}
-
 std::string to_string(std::vector<int> const& v, char delimiter)
 {
    if (std::empty(v))
       return {};
 
    if (std::size(v) == 1)
-      return to_str_raw(v.front(), 3, '0');
+      return std::to_string(v.front());
 
    std::string code;
    for (auto i = 0; i != tsvtree::ssize(v) - 1; ++i)
-      code += to_str_raw(v[i], 3, '0') + delimiter;
+      code += std::to_string(v[i]) + delimiter;
 
-   code += to_str_raw(v.back(), 3, '0');
+   code += std::to_string(v.back());
    return code;
 }
 
